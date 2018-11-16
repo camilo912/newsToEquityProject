@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module processingTextsFirstsSentences</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>processingTextsFirstsSentences</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:d%3A%5Conedrive%20-%20inversiones%20internacionales%20grupo%20sura%20s.a%5Cnewstoequity%5Cnewstoequityproject%5Cprocessingtextsfirstssentences.py">d:\onedrive - inversiones internacionales grupo sura s.a\newstoequity\newstoequityproject\processingtextsfirstssentences.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+<a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="pandas.html">pandas</a><br>
+<a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+</td><td width="25%" valign=top><a href="seaborn.html">seaborn</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-delete_stop_words"><strong>delete_stop_words</strong></a>(str, lang)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;de&nbsp;parada&nbsp;de&nbsp;la&nbsp;noticia<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;<br>
+-&nbsp;lang&nbsp;--&nbsp;String,&nbsp;lenguaje&nbsp;en&nbsp;el&nbsp;que&nbsp;está&nbsp;escrito&nbsp;la&nbsp;noticia<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;[valor]&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;sin&nbsp;las&nbsp;palabras&nbsp;de&nbsp;parada</tt></dd></dl>
+ <dl><dt><a name="-delete_weard_values"><strong>delete_weard_values</strong></a>(data)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;los&nbsp;valores&nbsp;atipicos&nbsp;de&nbsp;un&nbsp;conjunto&nbsp;de&nbsp;datos,&nbsp;lo&nbsp;hace&nbsp;mediante&nbsp;el&nbsp;rango&nbsp;intercuartilico<br>
+Todo&nbsp;dato&nbsp;que&nbsp;este&nbsp;1.5&nbsp;rangos&nbsp;intercuartilicos&nbsp;por&nbsp;debajo&nbsp;del&nbsp;cuartil&nbsp;1&nbsp;o&nbsp;por&nbsp;encima&nbsp;del&nbsp;cuartil&nbsp;3&nbsp;es&nbsp;un&nbsp;valor&nbsp;atipico&nbsp;y&nbsp;por&nbsp;l&nbsp;otanto&nbsp;se&nbsp;elimina<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;data&nbsp;--&nbsp;Arrego&nbsp;de&nbsp;numpy&nbsp;|&nbsp;lista,&nbsp;conjunto&nbsp;de&nbsp;datos&nbsp;a&nbsp;los&nbsp;cauels&nbsp;se&nbsp;les&nbsp;va&nbsp;a&nbsp;eliminar&nbsp;los&nbsp;datos&nbsp;atipicos<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;data&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;conjunto&nbsp;de&nbsp;datos&nbsp;sin&nbsp;valores&nbsp;atipicos</tt></dd></dl>
+ <dl><dt><a name="-eliminate_less_frequent_words"><strong>eliminate_less_frequent_words</strong></a>(df, limit, word_to_frecuency)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;menos&nbsp;frecuentes&nbsp;en&nbsp;todo&nbsp;el&nbsp;corpus.&nbsp;Tiene&nbsp;una&nbsp;mejora&nbsp;adicional&nbsp;que&nbsp;elimina&nbsp;las&nbsp;noticias&nbsp;que&nbsp;tengan&nbsp;pocas&nbsp;palabras&nbsp;luego&nbsp;de&nbsp;haber<br>
+eliminado&nbsp;las&nbsp;palabras&nbsp;menos&nbsp;frecuentes.<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;que&nbsp;contiene&nbsp;los&nbsp;datos&nbsp;a&nbsp;procesar&nbsp;(las&nbsp;noticias)<br>
+-&nbsp;limit&nbsp;--&nbsp;Entero,&nbsp;número&nbsp;minimo&nbsp;de&nbsp;apariciones&nbsp;en&nbsp;el&nbsp;corpus&nbsp;para&nbsp;que&nbsp;una&nbsp;palabra&nbsp;sea&nbsp;tenida&nbsp;en&nbsp;cuenta<br>
+-&nbsp;word_to_frecuency&nbsp;--&nbsp;Diccionario,&nbsp;diccionario&nbsp;que&nbsp;mapea&nbsp;cada&nbsp;palabra&nbsp;a&nbsp;la&nbsp;cantidad&nbsp;de&nbsp;veces&nbsp;que&nbsp;aparece&nbsp;en&nbsp;el&nbsp;corpus<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;el&nbsp;mismo&nbsp;dataframe&nbsp;de&nbsp;entrada&nbsp;pero&nbsp;sin&nbsp;las&nbsp;palabras&nbsp;menos&nbsp;repetidas&nbsp;y&nbsp;en&nbsp;el&nbsp;caso&nbsp;de&nbsp;que&nbsp;la&nbsp;noticia&nbsp;sea&nbsp;muy&nbsp;corta&nbsp;la&nbsp;elimina</tt></dd></dl>
+ <dl><dt><a name="-get_raw_data"><strong>get_raw_data</strong></a>(title, content)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;el&nbsp;titulo&nbsp;y&nbsp;las&nbsp;tres&nbsp;primeras&nbsp;oraciones&nbsp;de&nbsp;una&nbsp;noticia,&nbsp;hace&nbsp;la&nbsp;eparación&nbsp;en&nbsp;oraciones&nbsp;mediante&nbsp;un&nbsp;tokenizer&nbsp;de&nbsp;la&nbsp;ibreria&nbsp;nltk<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;title&nbsp;--&nbsp;String,&nbsp;título&nbsp;de&nbsp;la&nbsp;noticia<br>
+-&nbsp;content&nbsp;--&nbsp;String,&nbsp;contenido&nbsp;de&nbsp;la&nbsp;noticia<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;[valor]&nbsp;--&nbsp;String,&nbsp;título&nbsp;de&nbsp;la&nbsp;noticia&nbsp;concatenado&nbsp;con&nbsp;las&nbsp;tres&nbsp;primeras&nbsp;oraciones.</tt></dd></dl>
+ <dl><dt><a name="-get_word_to_frecuency"><strong>get_word_to_frecuency</strong></a>(data)</dt><dd><tt>función&nbsp;que&nbsp;mapea&nbsp;cada&nbsp;palabra&nbsp;a&nbsp;la&nbsp;cantidad&nbsp;de&nbsp;veces&nbsp;que&nbsp;aparece&nbsp;en&nbsp;el&nbsp;corpus<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;data&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;arreglo&nbsp;con&nbsp;todas&nbsp;las&nbsp;noticias<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;word_to_frecuency&nbsp;--&nbsp;Diccionario,&nbsp;diccionario&nbsp;que&nbsp;mapea&nbsp;cada&nbsp;palabra&nbsp;a&nbsp;la&nbsp;cantidad&nbsp;de&nbsp;veces&nbsp;que&nbsp;aparece&nbsp;en&nbsp;el&nbsp;corpus</tt></dd></dl>
+ <dl><dt><a name="-lemmatize_words"><strong>lemmatize_words</strong></a>(str)</dt><dd><tt>Función&nbsp;que&nbsp;convierte&nbsp;las&nbsp;palabras&nbsp;en&nbsp;su&nbsp;"lemas"&nbsp;o&nbsp;raíces&nbsp;<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;[valor]&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;con&nbsp;sus&nbsp;palabras&nbsp;"lematizadas"</tt></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt><dd><tt>Main&nbsp;del&nbsp;archivo,&nbsp;este&nbsp;archivo&nbsp;se&nbsp;encarga&nbsp;de&nbsp;preprocesar&nbsp;las&nbsp;noticias,&nbsp;"limpiar&nbsp;la&nbsp;data"&nbsp;en&nbsp;terminos&nbsp;geenrales.&nbsp;Hace&nbsp;las&nbsp;operaciones&nbsp;que&nbsp;estén&nbsp;definidas&nbsp;en&nbsp;el&nbsp;metodo<br>
+transform_tring.<br>
+&nbsp;<br>
+Primero&nbsp;ejecuta&nbsp;al&nbsp;funcion&nbsp;transform&nbsp;string,&nbsp;luego&nbsp;calcula&nbsp;las&nbsp;salidas&nbsp;de&nbsp;los&nbsp;ejemplos,&nbsp;luego&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;menos&nbsp;frecuentes&nbsp;y&nbsp;por&nbsp;ultimo&nbsp;guarda&nbsp;estos&nbsp;ultimos&nbsp;datos.</tt></dd></dl>
+ <dl><dt><a name="-only_glove_words"><strong>only_glove_words</strong></a>(str, words_in_glove)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;que&nbsp;no&nbsp;estén&nbsp;en&nbsp;el&nbsp;dataset&nbsp;de&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;glove<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia<br>
+-&nbsp;words_in_glove&nbsp;--&nbsp;Lista,&nbsp;listado&nbsp;de&nbsp;palabras&nbsp;que&nbsp;hay&nbsp;en&nbsp;el&nbsp;dataset&nbsp;glove<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;[valor]&nbsp;--String,&nbsp;string&nbsp;d&nbsp;ela&nbsp;noticia&nbsp;solo&nbsp;con&nbsp;palabras&nbsp;que&nbsp;estén&nbsp;en&nbsp;el&nbsp;dataset&nbsp;de&nbsp;glove</tt></dd></dl>
+ <dl><dt><a name="-read_embedd_vectors"><strong>read_embedd_vectors</strong></a>(embedd)</dt><dd><tt>Función&nbsp;que&nbsp;lee&nbsp;el&nbsp;dataset&nbsp;de&nbsp;embeddings&nbsp;de&nbsp;glove&nbsp;y&nbsp;retorna&nbsp;uan&nbsp;lista&nbsp;con&nbsp;las&nbsp;palabras&nbsp;que&nbsp;hay&nbsp;allí<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;embedd&nbsp;--&nbsp;Entero,&nbsp;indica&nbsp;que&nbsp;ebedding&nbsp;se&nbsp;va&nbsp;a&nbsp;usar&nbsp;0&nbsp;si&nbsp;glove,&nbsp;1&nbsp;si&nbsp;deps<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;[valor]&nbsp;Lista,&nbsp;lista&nbsp;con&nbsp;las&nbsp;palabras&nbsp;que&nbsp;hay&nbsp;en&nbsp;el&nbsp;dataset&nbsp;de&nbsp;words&nbsp;embeddings</tt></dd></dl>
+ <dl><dt><a name="-replace_bad_characters"><strong>replace_bad_characters</strong></a>(str)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;los&nbsp;caracteres&nbsp;que&nbsp;no&nbsp;se&nbsp;vana&nbsp;tener&nbsp;en&nbsp;cuenta&nbsp;como&nbsp;caracteres&nbsp;extraños&nbsp;pro&nbsp;ejemplo<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;sin&nbsp;los&nbsp;caracteres&nbsp;indeseados</tt></dd></dl>
+ <dl><dt><a name="-stem_words"><strong>stem_words</strong></a>(str)</dt><dd><tt>Función&nbsp;que&nbsp;convierte&nbsp;las&nbsp;palabras&nbsp;en&nbsp;sus&nbsp;"stems"&nbsp;o&nbsp;raíces<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;[valor]&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;con&nbsp;sus&nbsp;palabras&nbsp;"stemizadas"</tt></dd></dl>
+ <dl><dt><a name="-transform_string"><strong>transform_string</strong></a>(str, words_in_glove, lang)</dt><dd><tt>Función&nbsp;que&nbsp;preprocesa&nbsp;las&nbsp;noticias,&nbsp;recibe&nbsp;el&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;completa&nbsp;y&nbsp;retorna&nbsp;el&nbsp;string&nbsp;preprocesado<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;que&nbsp;se&nbsp;va&nbsp;a&nbsp;preprocesar<br>
+-&nbsp;words_in_glove&nbsp;--&nbsp;Lista,&nbsp;lista&nbsp;de&nbsp;palabras&nbsp;en&nbsp;el&nbsp;dataset&nbsp;de&nbsp;vectores&nbsp;de&nbsp;word&nbsp;embeddings&nbsp;de&nbsp;glove<br>
+-&nbsp;lang&nbsp;--&nbsp;String,&nbsp;lenguaje&nbsp;en&nbsp;el&nbsp;que&nbsp;está&nbsp;la&nbsp;noticia<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;str&nbsp;--&nbsp;String,&nbsp;strng&nbsp;de&nbsp;la&nbsp;noticia&nbsp;preprocesada</tt></dd></dl>
+</td></tr></table>
+</body></html>

@@ -4,9 +4,17 @@ import calcular_salidas
 import datetime
 from matplotlib import pyplot as plt
 
-def mani(confidence):
+def main(confidence):
+	"""
+		Main del archivo, se encarga de calcular als salidas invocando al archivo calcular_salidas.py y cambia las
+		clases en el archivo data14Glove_noStem_classes.csv
+
+		Parámetros:
+		- confidence -- Flotante, nivel de confianza necesasrio pra calcular las salidas o clases
+	"""
+
 	df = pd.read_csv('data14Glove_noStem_classes.csv', index_col=0)
-	classes = calcular_salidas.mani(confidence)
+	classes = calcular_salidas.main(confidence)
 
 	for i in range(len(df)):
 		day, eq = df.loc[i, 'date'], df.loc[i, 'related to']
@@ -32,4 +40,4 @@ def mani(confidence):
 	# plt.show()
 
 if __name__ == '__main__':
-	mani(0.6893894448599668)
+	main(0.6893894448599668)

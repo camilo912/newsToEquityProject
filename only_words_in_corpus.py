@@ -15,22 +15,30 @@ def read_embedd_vectors():
 		f.close()
 	return word_to_vec_map
 
-df = pd.read_csv('data14Glove.csv')
-words = []
-for c in df['content']:
-	words.extend(c.split(' '))
-	words = list(set(words))
+def main():
+	"""
+		Main del archivo, este se encarga de leer las palabras en nuestra data, luego lee todos los embedings que se tienen,
+		y por cada palabra en la lista de las que se posee el embedding se mira s esa palabra aparece en nuestra data, y si aparece
+		escribe ste embeding en otro archivo. Esto se hace para hacer ela rhcivo con los embedding más liviano. En terminos generales
+		lo que hace es separar solo los embedding que se usan en un arhcivo aparte para leer de este y no del total de embeddings.
+	"""
+	df = pd.read_csv('data14Glove.csv')
+	words = []
+	for c in df['content']:
+		words.extend(c.split(' '))
+		words = list(set(words))
 
-f2 = open('glove.6B.50d.selected.txt', 'w', encoding='utf8')
-with open('glove.6B.50d.txt', 'r', encoding = "utf8") as f:
-	for line in f:
-		curr_word = line.strip().split()[0]
-		if curr_word in words:
-			f2.write(line)
-	f.close()
-f2.close()
+	f2 = open('glove.6B.50d.selected.txt', 'w', encoding='utf8')
+	with open('glove.6B.50d.txt', 'r', encoding = "utf8") as f:
+		for line in f:
+			curr_word = line.strip().split()[0]
+			if curr_word in words:
+				f2.write(line)
+		f.close()
+	f2.close()
 
-
+if __name__ == '__main__':
+	main()
 
 
 

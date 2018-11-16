@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module calcular_salidas</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>calcular_salidas</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:d%3A%5Conedrive%20-%20inversiones%20internacionales%20grupo%20sura%20s.a%5Cnewstoequity%5Cnewstoequityproject%5Ccalcular_salidas.py">d:\onedrive - inversiones internacionales grupo sura s.a\newstoequity\newstoequityproject\calcular_salidas.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+</td><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="pandas.html">pandas</a><br>
+</td><td width="25%" valign=top><a href="scipy.html">scipy</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-get_common"><strong>get_common</strong></a>(days, dates)</dt><dd><tt>Función&nbsp;que&nbsp;obtiene&nbsp;cosas&nbsp;en&nbsp;común&nbsp;entre&nbsp;dos&nbsp;listados,&nbsp;en&nbsp;este&nbsp;caso,&nbsp;fechas&nbsp;en&nbsp;común<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;days&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;primer&nbsp;arreglo&nbsp;con&nbsp;fechas<br>
+-&nbsp;dates&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;segundo&nbsp;arreglo&nbsp;con&nbsp;fechas<br>
+&nbsp;<br>
+Retorna<br>
+-&nbsp;fechas&nbsp;--&nbsp;Lista,&nbsp;lista&nbsp;con&nbsp;todas&nbsp;las&nbsp;fechas&nbsp;en&nbsp;común&nbsp;entre&nbsp;los&nbsp;dos&nbsp;arreglos&nbsp;de&nbsp;fechas.</tt></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>(confidence)</dt><dd><tt>Main&nbsp;del&nbsp;script,&nbsp;función&nbsp;que&nbsp;según&nbsp;una&nbsp;confianza&nbsp;cálcula&nbsp;las&nbsp;clases&nbsp;para&nbsp;cada&nbsp;ejemplo,&nbsp;teniendo&nbsp;en&nbsp;cuenta&nbsp;un&nbsp;intervalo&nbsp;de&nbsp;confianza.<br>
+Para&nbsp;calcular&nbsp;la&nbsp;clase&nbsp;lo&nbsp;que&nbsp;hace&nbsp;es&nbsp;que&nbsp;entrena&nbsp;un&nbsp;modelo&nbsp;de&nbsp;regresion&nbsp;lineal&nbsp;(CAPM),&nbsp;con&nbsp;la&nbsp;prediccion&nbsp;de&nbsp;este&nbsp;modelo&nbsp;se&nbsp;saca&nbsp;un&nbsp;intervalo&nbsp;de&nbsp;confianza&nbsp;con<br>
+media&nbsp;la´predicción&nbsp;y&nbsp;varianza&nbsp;la&nbsp;varianza&nbsp;de&nbsp;las&nbsp;observaciones.&nbsp;Luego&nbsp;se&nbsp;toma&nbsp;la&nbsp;observación&nbsp;especifica&nbsp;y&nbsp;si&nbsp;la&nbsp;observación&nbsp;está&nbsp;en&nbsp;este&nbsp;intervalo&nbsp;se&nbsp;considera&nbsp;de&nbsp;la&nbsp;clase<br>
+normal,&nbsp;si&nbsp;está&nbsp;por&nbsp;encima&nbsp;se&nbsp;considera&nbsp;de&nbsp;la&nbsp;clase&nbsp;positiva&nbsp;y&nbsp;si&nbsp;está&nbsp;por&nbsp;debajo&nbsp;se&nbsp;considera&nbsp;de&nbsp;la&nbsp;clase&nbsp;negativa.<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;confidence&nbsp;--&nbsp;Flotante,&nbsp;nivel&nbsp;de&nbsp;confinza&nbsp;para&nbsp;calcular&nbsp;el&nbsp;intervalo<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;df3&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;que&nbsp;tiene&nbsp;los&nbsp;datos&nbsp;de&nbsp;fecha,&nbsp;clase&nbsp;a&nbsp;la&nbsp;que&nbsp;pertenece&nbsp;el&nbsp;ejemplo&nbsp;y&nbsp;a&nbsp;que&nbsp;equity&nbsp;está&nbsp;relacionado&nbsp;el&nbsp;ejemplo</tt></dd></dl>
+</td></tr></table>
+</body></html>

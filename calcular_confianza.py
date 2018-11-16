@@ -14,6 +14,15 @@ from timeit import default_timer as timer
 
 
 def objective(params):
+	"""
+		Función objetivo de la optimización bayesiana
+
+		Parámetros:
+		- params -- Diccionario, los parámetros con los cuales se va a ejecutar el modelo
+
+		Retorna:
+		- diccionario -- Diccioanrio, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el esatdo de la ejecución. Todo esto es necesario para la libreria
+	"""
 	
 	# Keep track of evals
 	global ITERATION
@@ -29,7 +38,7 @@ def objective(params):
 
 	start = timer()
 
-	cambiar_salidas.mani(params['confidence'])
+	cambiar_salidas.main(params['confidence'])
 	call(['python', 'trainHeadlines_parameters_gpu.py', '-m', '13'])
 	df = pd.read_csv('bests.txt', index_col=-1, header=-1)
 	loss = list(df[0])[-1]
@@ -49,8 +58,19 @@ def objective(params):
 	return {'loss': loss, 'params': params, 'iteration': ITERATION,
 			'train_time': run_time, 'status': STATUS_OK}
 
-def bayes_optimization():
-	global ITERATION, MAX_EVALS
+def bayes_optimization(MAX_EVALS):
+	"""
+		Función para encontrar los parámetros optimos. En este caso se usa para encontrar el intervalo de confianza óptimo.
+
+		Parámetros:
+		NADA
+
+		Retorna: 
+		- best -- Diccionario, diccionario con los mejores parámetros encontrados en la optimización bayesiana
+
+	"""
+
+	global ITERATION
 	ITERATION = 0
 
 	space = {'confidence': hp.uniform('confidence', 0.3, 0.7)}
@@ -81,6 +101,7 @@ def bayes_optimization():
 	return best
 
 
-MAX_EVALS = 1000
-best = bayes_optimization()
-print(best)
+if(__name__ == '__main__'):
+	MAX_EVALS = 1000
+	best = bayes_optimization(MAX_EVALS)
+	print(best)

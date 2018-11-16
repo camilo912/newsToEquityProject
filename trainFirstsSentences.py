@@ -32,7 +32,16 @@ import numba
 # pd.options.mode.chained_assignment = None  # default='warn'
 
 class DataManager():
+	"""
+		Clase que administra la lectura de los datos de entrada: las noticias, los vectores de embedding, etc.
+	"""
 	def __init__(self):
+		"""
+			Constructor de la clase aqui  se lee la data de entrada, se hace un "shuffle" osea se desorganiza, se sacan igual número de ejemplos para cada clase, para tener uniformidad de los datos
+			lee los vectores de embedding de las palabras, le asigna un indice a cada palabra y  asocia cada indice con un vector de embedding
+
+		"""
+
 		# Load data
 		self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
 		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
@@ -42,6 +51,7 @@ class DataManager():
 		self.df = self.df.groupby('classes').head(mini)[['date', 'content', 'classes', 'related to']]
 		self.df.index = np.arange(self.df.shape[0])
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
+		################## quitar este loop cuando n se necesite
 		for i in range(self.df.shape[0]):
 			if(type(self.df.loc[i, 'content']) == float):
 				print(i, self.df.loc[i, 'content'])
@@ -69,12 +79,43 @@ class DataManager():
 		self.word2embedd = self.read_embedd_vectors(0)
 
 	def get_data(self):
+		"""
+			Función que retorna datos utiles de la clase
+
+			Parámetros:
+			NADA
+
+			Retorna:
+			- df -- DataFrame de pandas, daaframe con los datos de entrada
+			- words -- Lista, listado de las palabras en el corpus
+			- max_len -- Entero, indica el mayor número de palabras dentro de una noticia o ejemplo
+			- idx2word -- Diccionario, diccionario que tiene como claves indices y como vores las palabras del corpus, asocia cada palabra del corpus con un indice especifico
+			- word2embedd -- Diccionaro, diccionario que tiene como claves las palabras de corpus y como vaor los embddings de las palabras
+		"""
+
 		return self.df, self.words, self.max_len, self.idx2word, self.word2embedd
 
-	def indexer(self, s): 
+	def indexer(self, s):
+		"""
+			Función que retorna los indices de las palabrasde una noticia
+
+			Parámetros:
+			- s -- String, conteni de un ejemplo o noticia
+
+			Retorna:
+			- [valor] -- Lista, lista de indices delas palabra ingresadas en orden
+		"""
+
 		return [self.word2idx[w.lower()] for w in s.split()]
 
 	def read_embedd_vectors(self, embedd):
+		"""
+			Función que retorna el diccionario que mapea de palabras a vector de embedding
+
+			Parámetros:
+			- embedd -- Entero, indica que embdding utilizar 0:glove 1:deps
+		"""
+
 		if(embedd == 0):
 			# with open('glove.6B.50d.txt', 'r', encoding = "utf8") as f:
 			with open('glove.6B.50d.selected.txt', 'r', encoding='utf8') as f:
@@ -105,7 +146,20 @@ class DataManager():
 		return word_to_vec_map
 
 def get_embedd_dic(idx2word, word2embedd):
+	"""
+		Función que retorna un arreglo con los vectores de embedding de todas las palabras del corpus ordenadas por el indice
+
+		Parámetros:
+		- idx2word -- Diccionario, las claves son los indices (enteros) y los valores son palabras. Este es el indicionario que mapea una palabra con su indice
+		- word2embedd -- Dicconaro, las claves son palabras en el corpus, están todas. Los valores son los vectores de embedding de cada palabra
+
+		Retorna:
+		- dic -- Arreglo de numpy, arreglo con todos los vectores de embedding delas paabras en el corpus, 
+	"""
 	dic = []
+	#################################### ******************************************************************************************
+	################### revisar si quedan en orden, por que un diccionario no tiene roden y cuando se llama el .keys() pueden quedar en desorden
+	########################################################################### ******************************************************************
 	for i in idx2word.keys():
 		#if(i > 1):
 		dic.append(word2embedd[idx2word[i]])
@@ -113,6 +167,17 @@ def get_embedd_dic(idx2word, word2embedd):
 	return dic
 
 def embedd(idxs, default, new2, embedd_dic):
+	"""
+		Función para obtener los vectores de embedding a partir de los indices de las palabras
+
+		Parámetros:
+		- idxs -- Arreglo de numpy, arreglo con los indices de las palabras del ejemplo (o noticia, como se quiera llamar). Indexadas según el indice de las palabras de todo el corpus
+		- default -- Arreglo de numpy, arreglo lleno de zeros el cual tiene los valores por default, este se utiliza cuando el idice es 0: padding o 1: palabr desconocida
+
+		Retorna:
+		- new -- arreglo de numpy con los vectores de embedding de las palabras del ejemplo
+	"""
+
 	embedd_dic2 = embedd_dic.copy()
 	new = new2.copy()
 	cont = 0
@@ -126,6 +191,20 @@ def embedd(idxs, default, new2, embedd_dic):
 
 @numba.jit(nopython=True)
 def embedd_gpu(idxs, default, new2, embedd_dic):
+	"""
+		Función para obtener los vectores de embedding a partir de los indices de las palabras. Esta funcion es utilizada cuando ha una GPU disponible, por que supuestamente la GPU agiliza este proceso
+		por que la GPU es especializada para trabajar con matrices como en este caso, sin embargo eso depende de la GPU que se posea aunque en general si mejora la rapidez.
+
+		El signature que tiene: @numba.jit(nopython=True) es la forma como indicamos que esta función va a ser procesada pr la libreria numba la cual se encarga de todo el procesamiento en GPU de nvidia
+
+		Parámetros:
+		- idxs -- Arreglo de numpy, arreglo con los indices de las palabras del ejemplo (o noticia, como se quiera llamar). Indexadas según el indice de las palabras de todo el corpus
+		- default -- Arreglo de numpy, arreglo lleno de zeros el cual tiene los valores por default, este se utiliza cuando el idice es 0: padding o 1: palabr desconocida
+
+		Retorna:
+		- new -- arreglo de numpy con los vectores de embedding de las palabras del ejemplo
+	"""
+
 	embedd_dic2 = embedd_dic.copy()
 	new = new2.copy()
 	cont = 0
@@ -138,10 +217,40 @@ def embedd_gpu(idxs, default, new2, embedd_dic):
 	return new
 
 def media_movil(data, n):
+	"""
+		Función que calcula la media movil de un arreglo en los últimos n valores
+
+		Parámetros:
+		- data -- Lista | Arreglo de numpy, datos a los cuales se les va a sacar la media movil
+		- n -- Entero, número de datos con los que se va a hacer la media movil
+
+		Retorna:
+		- [valor] -- Flotante, la media de los últimos n valores
+	"""
 	return np.mean(data[-n:])
 
 class VectorizeData(Dataset):
+	"""
+		Clase que hereda de la clase Dataset de pytorch, se encarga de hacer el puente entre los datos y la entrada a los modelos, esta clase es necesaria por la libreria.
+
+		Funciona como una especie de "generator" de python, se usa para generar datos
+	"""
+
 	def __init__(self, df, max_len, embedding_dim, embedd_dic):
+		"""
+			Constructor de la clase
+
+			Parámetros:
+			- df -- DataFrame de pandas, dataframe con los datos a procesar
+			- max_len -- -- Entero, máxima longitud de una entrada
+			- embedding_dim -- Entero, dimensión del word embedding
+			- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
+
+			Retorna:
+			NADA
+
+		"""
+
 		# global embedding_dim, embedd_dic
 		self.df, self.maxlen = df, max_len
 		self.df.loc[:, 'lengths'] = self.df.contentidx.apply(lambda x: self.maxlen if len(x) > self.maxlen else len(x))
@@ -153,9 +262,32 @@ class VectorizeData(Dataset):
 		self.df.index = np.arange(self.df.shape[0])
 		
 	def __len__(self):
+		"""
+			Función que retorna la cantidad(longitud) de los datos de entrada
+
+			Parámetros:
+			NADA
+
+			Retorna:
+			- [valor] -- Entero, cantidad de datos de entrada, en este caso, cantidad de noticias
+		"""
 		return self.df.shape[0]
 	
 	def __getitem__(self, idx):
+		"""
+			Función que retorna un ejemplo de los datos de entrada
+
+			Parámetros:
+			- idx -- Entero, indice del ejemplo que se va a reotrnar
+
+			Retorna:
+			- X -- Arreglo de numpy, vector de embeddings de la noticia especificada por el idx
+			- y -- Entero, clase a la que pertenece el ejemplo
+			- lens -- Entero, longitud del ejemplo 
+			- content -- String, contenido de la noticia
+			- related -- String, acción a la cual está asociada la noticia
+		"""
+
 		related = self.df.loc[idx, 'related to']
 		content = self.df.content[idx]
 		X = self.df.emb[idx]
@@ -164,18 +296,48 @@ class VectorizeData(Dataset):
 		return X, y, lens, content, related
 	
 	def pad_data(self, s):
+		"""
+			Función que se encarga de rellenar con zeros los espacios sobrantes de cada noticia para que todas queden con la misma longitud (self.maxlen) igualmente trunca la noticia si es mas larga que este número.
+
+			Parámetros:
+			- s -- Arreglo de numpy, arreglo con los indices de las palabras de la noticias, indice con respecto al total del vocabulario.
+
+			Retorna:
+			- padded -- Arreglo de numpy, tiene tamaño self.maxlen, son los indices de la palabras con el padding si es necesario
+		"""
 		padded = np.zeros((self.maxlen,), dtype=np.int64)
 		if len(s) > self.maxlen: padded[:] = s[:self.maxlen]
 		else: padded[:len(s)] = s
 		return padded
 
 def sort_batch(X, y, lengths):
+	"""
+		Función que organiza un batch en orden descendente.
+
+		Parámetros:
+		- X -- Arreglo de numpy, vectores de embedding de las palabras,es decir, la entrada para los modelos
+		- y -- Arreglo de numpy, Arreglo que contiene los enteros de la clase a la que pertenece cada noticia, es decir, la salida de los modelos
+		- lengths -- Arreglo de numpy, Arreglo co la longitud en palabras de cada noticia, esto es necesario para manejar el tema de padding
+	"""
 	lengths, indx = lengths.sort(dim=0, descending=True)
 	X = X[indx]
 	y = y[indx]
 	return X.transpose(0,1), y, lengths # transpose (batch x seq) to (seq x batch)
 
 def split_uniformly(df, train_size):
+	"""
+		Función que separa uniformemente los datos de entrada en training y testing, es decir, el [train_size]% de cada clase irá al set de ntrenamiento y el 1-[train_size]% irá al set de testing
+
+		Parámetros:
+		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
+
+		Retorna:
+		- trdf -- DataFrame de pandas, dataframe con los datos de entrenamiento
+		- tedf -- DataFrame de pandas, dataframe con los datos de testing
+
+	"""
+
 	trdfc = []
 	tedfc = []
 	for c in np.unique(df.classes):
@@ -199,6 +361,29 @@ def split_uniformly(df, train_size):
 
 
 def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads):
+	"""
+		Función para entrenar un modelo
+
+		Parámetros:
+		- model -- Classe, modelo que se va a entrenar, la case debe venir del archivo models.py
+		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- loss_fn -- Function, función de perdida apra el modelo, por default es NLL (neative log likelihood)
+		- opt -- Optimizador, optimizador de pytorch que se encargara de actualizar los pesos del modelo, por default es Adam.
+		- n_epochs -- Entero, número de epocas de entrenamiento
+		- max_len -- Entero, máxima longitud de una entrada
+		- batch_size -- Entero, tamaño de los batchs de entrenamiento
+		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
+		- embedding_dim -- Entero, dimensión del word embedding
+		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
+		- verbose -- Entero, nivel de verbosidad de la ejecución
+		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
+
+		Retorna:
+		- modified_test_acc -- Flotante, el desempeño que se obtuvo con el modelo, es una versión modificada de la exactitud para lograr optimziar de una mejor manera. 
+			Para su calculo el 50% equivale a una media movil de la exactitud del modelo, el 15 % a si la media movil de la exactitud de entrenamiento es mayor a 45%, 
+			otro 15% a si la media movil de la exactitud de testing es mayor al 34% y el 20% restante a si se cumplen las últimas dos condiciones.
+
+	"""
 	df_train, df_test = split_uniformly(df, train_size)
 
 	# prevent size 1 batches in training
@@ -325,7 +510,26 @@ def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embe
 	return modified_test_acc
 
 def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads):
-	
+	"""
+		Función objetivo que sirve para la optimización bayesiana, sirve para ejecuar el modelo con los parámetros recibidos, calcular el error de esta ejecución y así decidir
+		cuales parámetros son mejores.
+
+		Parámetros:
+		- params -- Diccionario, contien los parametros para la ejecución, estos parámetros son dados por la libreria de optimización bayesiana (hyperopt) dentro de un espacio previamente definido
+		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- max_len -- Entero, máxima longitud de una entrada
+		- n_out -- Entero, número de clases para clasificar la entrada
+		- embedding_dim -- Entero, dimensión del word embedding
+		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
+		- id_model -- Entero, id del modelo que se va a entrenar
+		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
+		- verbose -- Entero, nivel de verbosidad de la ejecución
+		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
+		
+		Retorna:
+		- diccionario -- Diccioanrio, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el esatdo de la ejecución. Todo esto es necesario para la libreria
+
+	"""
 	# Keep track of evals
 	global ITERATION
 	
@@ -364,6 +568,25 @@ def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, e
 			'train_time': run_time, 'status': STATUS_OK}
 
 def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size, id_model, embedd_dic, verbose ,bads):
+	"""
+		Función para encontrar los parámetros optimos para un modelo
+
+		Parámetros:
+		- MAX_EVALS -- Entero, número máximo  de iteraciones de la optimización bayesiana
+		- n_out -- Entero, número de clases para clasificar la entrada
+		- max_len -- Entero, máxima longitud de una entrada
+		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- embedding_dim -- Entero, dimensión del word embedding
+		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
+		- id_model -- Entero, id del modelo que se va a entrenar
+		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
+		- verbose -- Entero, nivel de verbosidad de la ejecución
+		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
+
+		Retorna: 
+		- best -- Diccionario, diccionario con los mejores parámetros encontrados en la optimización bayesiana
+
+	"""
 	global ITERATION
 	ITERATION = 0
 
@@ -404,7 +627,19 @@ def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size,
 
 	return best
 
-if __name__ == '__main__':
+def main():
+	"""
+		Main del proyecto, con este se ejecuta el entrenamiento del modelo de NLP.
+		Para invocar este script se le debe pasar el número del modelo a utilizar con la opción -m. Ejemplo: $python trainFirstsSentences.py -m 13
+		Adicionalmente hay otros dos parámetros:
+			-p -> un número entero indicando que se queire hacer optimización de parámetros, el número de nota el número de iteraciones de optimización que se deseen hacer.
+			-v -> Parámetro que controla el nivel de verbosidad de la ejecución, por default es 1
+
+		Este main solo adquiere los parámetros apra la ejecución ya sean los por default o que se haga optimización para encontrar una buena combianción de ellos y luego de esto
+		crea un modelo del tipo especificado y lo entrena invocano al metodo fit.
+
+	"""
+
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-m', '--model', help='number of model to train with', type=int, required=True)
 	parser.add_argument('-p', '--parameters', nargs='?', help='number of iterations for performing parameters optimization with bayes optimization if none no optimization is done', type=int)
@@ -466,4 +701,6 @@ if __name__ == '__main__':
 	fit(m, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads)
 
 
+if __name__ == '__main__':
+	main()
 

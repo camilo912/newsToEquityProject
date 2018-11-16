@@ -6,6 +6,16 @@ from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from torch.autograd import Variable
 
+"""
+	Clase que contiene todos los mmodelos qu se puden utilizar par entrenar, se pueden agregar y quitar modelos, teniendo en cuenta qu se debe actualizar también la lista de modelos
+	en el main que está en el archivo trainFirstsSentences.py
+
+	No se va a documentar cada modelo por que sería muy repetitivo y todos comparten estructuras en común además de que se pueden modificar mucho.
+
+	Todos estos modelos heredan de la clase torch.nn.Module de pytorch 
+"""
+
+
 # Model with: dropout, gru, concat-pooling, linear, tanh, batchnorm, linear(out=h)
 class Model0(nn.Module):
 	def __init__(self, embedding_dim, n_hidden, n_out, drop_p):
