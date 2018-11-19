@@ -5,7 +5,8 @@ import seaborn as sns
 import math
 
 #df = pd.read_csv('data9Deps.csv')
-df = pd.read_csv('data14Glove.csv')
+# df = pd.read_csv('data14Glove.csv')
+df = pd.read_csv('data14Glove_noStem.csv')
 
 ###################### implementacion de clases con normalizacion y eso srgun Daniel #############
 

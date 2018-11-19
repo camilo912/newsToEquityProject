@@ -22,12 +22,12 @@ def main():
 		escribe ste embeding en otro archivo. Esto se hace para hacer ela rhcivo con los embedding más liviano. En terminos generales
 		lo que hace es separar solo los embedding que se usan en un arhcivo aparte para leer de este y no del total de embeddings.
 	"""
-	df = pd.read_csv('data14Glove.csv')
+	# df = pd.read_csv('data14Glove.csv')
+	df = pd.read_csv('data14Glove_noStem.csv')
 	words = []
 	for c in df['content']:
-		words.extend(c.split(' '))
+		words.extend(c.lower().split(' '))
 		words = list(set(words))
-
 	f2 = open('glove.6B.50d.selected.txt', 'w', encoding='utf8')
 	with open('glove.6B.50d.txt', 'r', encoding = "utf8") as f:
 		for line in f:

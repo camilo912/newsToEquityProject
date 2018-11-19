@@ -43,7 +43,8 @@ class DataManager():
 		"""
 
 		# Load data
-		self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
+		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
+		self.df = pd.read_csv('data14Glove_noStem.csv', error_bad_lines=False)
 		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
 		#self.df = pd.read_csv('data14Deps.csv', error_bad_lines=False)
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
@@ -51,7 +52,7 @@ class DataManager():
 		self.df = self.df.groupby('classes').head(mini)[['date', 'content', 'classes', 'related to']]
 		self.df.index = np.arange(self.df.shape[0])
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
-		################## quitar este loop cuando n se necesite
+		################## quitar este loop cuando no se necesite
 		for i in range(self.df.shape[0]):
 			if(type(self.df.loc[i, 'content']) == float):
 				print(i, self.df.loc[i, 'content'])
@@ -158,10 +159,11 @@ def get_embedd_dic(idx2word, word2embedd):
 	"""
 	dic = []
 	#################################### ******************************************************************************************
-	################### revisar si quedan en orden, por que un diccionario no tiene roden y cuando se llama el .keys() pueden quedar en desorden
+	################### revisar si quedan en orden, por que un diccionario no tiene orden y cuando se llama el .keys() pueden quedar en desorden
 	########################################################################### ******************************************************************
-	for i in idx2word.keys():
+	for i in sorted(idx2word.keys()):
 		#if(i > 1):
+		################ NOTA: si alguna palabra no está en el word2embedd, recuerde actualizar las palabras seleccionadas ejecutando only_words_in_corpus.py con el archivo que se esté trabajando
 		dic.append(word2embedd[idx2word[i]])
 	dic =  np.array(dic, dtype=np.float32)
 	return dic
@@ -689,7 +691,7 @@ def main():
 		batch_size = 116 # 67
 		drop_p = 0.12180530013355763 # 0.5
 		lr = 0.015143175534512585 # 0.008102095403861038
-		n_epochs = 1#117 # 126
+		n_epochs = 20 # 117 # 126
 		n_hidden = 46 # 84
 		# weight_decay = 0.0005
 
