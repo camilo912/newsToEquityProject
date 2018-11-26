@@ -28,9 +28,6 @@ from timeit import default_timer as timer
 
 import numba
 
-# eliminate warning from pandas
-# pd.options.mode.chained_assignment = None  # default='warn'
-
 class DataManager():
 	"""
 		Clase que administra la lectura de los datos de entrada: las noticias, los vectores de embedding, etc.
@@ -44,18 +41,15 @@ class DataManager():
 
 		# Load data
 		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
-		self.df = pd.read_csv('data14Glove_noStem.csv', error_bad_lines=False)
+		self.df = pd.read_csv('data14Glove_noStem.csv')
 		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
 		#self.df = pd.read_csv('data14Deps.csv', error_bad_lines=False)
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
 		mini = min(self.df.groupby('classes').count()['date'].values)
+		# title is inside content
 		self.df = self.df.groupby('classes').head(mini)[['date', 'content', 'classes', 'related to']]
 		self.df.index = np.arange(self.df.shape[0])
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
-		################## quitar este loop cuando no se necesite
-		for i in range(self.df.shape[0]):
-			if(type(self.df.loc[i, 'content']) == float):
-				print(i, self.df.loc[i, 'content'])
 		self.df['content'] = self.df.content.apply(lambda x: x.strip())
 
 		# Construct vocabulary
@@ -95,6 +89,7 @@ class DataManager():
 		"""
 
 		return self.df, self.words, self.max_len, self.idx2word, self.word2embedd
+
 
 	def indexer(self, s):
 		"""
@@ -158,13 +153,11 @@ def get_embedd_dic(idx2word, word2embedd):
 		- dic -- Arreglo de numpy, arreglo con todos los vectores de embedding delas paabras en el corpus, 
 	"""
 	dic = []
-	#################################### ******************************************************************************************
-	################### revisar si quedan en orden, por que un diccionario no tiene orden y cuando se llama el .keys() pueden quedar en desorden
-	########################################################################### ******************************************************************
+
 	for i in sorted(idx2word.keys()):
-		#if(i > 1):
 		################ NOTA: si alguna palabra no está en el word2embedd, recuerde actualizar las palabras seleccionadas ejecutando only_words_in_corpus.py con el archivo que se esté trabajando
 		dic.append(word2embedd[idx2word[i]])
+
 	dic =  np.array(dic, dtype=np.float32)
 	return dic
 
@@ -388,6 +381,9 @@ def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embe
 	"""
 	df_train, df_test = split_uniformly(df, train_size)
 
+	#import data_augmentation
+	#df_train = data_augmentation.augment_data(df_train)
+
 	# prevent size 1 batches in training
 	if(df_train.shape[0] % batch_size == 1 or df_test.shape[0] % batch_size == 1):
 		batch_size += 1
@@ -594,16 +590,16 @@ def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size,
 
 	# space
 	# big
-	# space = {'batch_size': hp.quniform('batch_size', 5, 120, 1),
-	# 		'drop_p': hp.uniform('drop_p', 0.0, 1.0),
-	# 		'lr': hp.uniform('lr', 0.00001, 0.8),
-	# 		'n_epochs': hp.quniform('n_epochs', 5, 150, 1),
-	# 		'n_hidden': hp.quniform('n_hidden', 5, 100, 1)}
-	space = {'batch_size': hp.quniform('batch_size', 68, 100, 1),
-			'drop_p': hp.uniform('drop_p', 0.01, 0.4),
-			'lr': hp.uniform('lr', 0.001, 0.1),
-			'n_epochs': hp.quniform('n_epochs', 95, 130, 1),
-			'n_hidden': hp.quniform('n_hidden', 15, 70, 1)}
+	space = {'batch_size': hp.quniform('batch_size', 5, 120, 1),
+			'drop_p': hp.uniform('drop_p', 0.0, 1.0),
+			'lr': hp.uniform('lr', 0.00001, 0.8),
+			'n_epochs': hp.quniform('n_epochs', 5, 75, 1),
+			'n_hidden': hp.quniform('n_hidden', 5, 300, 1)}
+	# space = {'batch_size': hp.quniform('batch_size', 68, 100, 1),
+	# 		'drop_p': hp.uniform('drop_p', 0.01, 0.4),
+	# 		'lr': hp.uniform('lr', 0.001, 0.1),
+	# 		'n_epochs': hp.quniform('n_epochs', 95, 130, 1),
+	# 		'n_hidden': hp.quniform('n_hidden', 15, 70, 1)}
 
 	# Keep track of results
 	bayes_trials = Trials()
@@ -657,7 +653,7 @@ def main():
 	n_out = 3
 	train_size = 0.8
 	embedding_dim = len(word2embedd[list(word2embedd.keys())[0]])
-	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14]
+	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14, models.Model15]
 	id_model = int(args.model)
 	verbose = args.verbose
 	bads = True
@@ -688,15 +684,15 @@ def main():
 		# # weight_decay = 0.00005
 
 		# for new approach
-		batch_size = 116 # 67
-		drop_p = 0.12180530013355763 # 0.5
-		lr = 0.015143175534512585 # 0.008102095403861038
-		n_epochs = 20 # 117 # 126
-		n_hidden = 46 # 84
-		# weight_decay = 0.0005
+		batch_size = 116 # 116 # 67
+		drop_p = 0.5 # 0.12180530013355763 # 0.5
+		lr = 0.005 # 0.001 # 0.015143175534512585 # 0.008102095403861038
+		n_epochs = 40 # 117 # 126
+		n_hidden = 84 # 46 # 84
+		weight_decay = 0.01 # 0.01 # 0.0005
 
 	m = modelos[args.model](embedding_dim, n_hidden, n_out, drop_p)
-	opt = optim.Adam(m.parameters(), lr)#, weight_decay=weight_decay)
+	opt = optim.Adam(m.parameters(), lr, weight_decay=weight_decay)
 	#loss_fn = nn.CrossEntropyLoss()
 	loss_fn = F.nll_loss
 

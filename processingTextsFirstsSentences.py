@@ -132,7 +132,7 @@ def read_embedd_vectors(embedd):
 
 	return word_to_vec_map.keys()
 
-def only_glove_words(str, words_in_glove):
+def only_glove_words(str, words_in_glove, source):
 	"""
 		Función que elimina las palabras que no estén en el dataset de vectores de embedding de glove
 
@@ -146,40 +146,12 @@ def only_glove_words(str, words_in_glove):
 	std = ''
 	cont=0
 	for w in str.split(' '):
-		if(w in words_in_glove and w != '-' and w != 'reuter' and w != 'reuters' and w != "–"):
+		if(w in words_in_glove and w != '-' and w != source[:-1] and w != source and w != "–"):
 			std += w + ' '
 		# else:
 		#	std += '_UNK '
 		cont+=1
 	return std[:-1]
-
-def transform_string(cad, words_in_glove, lang):
-	"""
-		Función que preprocesa las noticias, recibe el string de la noticia completa y retorna el string preprocesado
-
-		Parámetros:
-		- str -- String, string de la noticia que se va a preprocesar
-		- words_in_glove -- Lista, lista de palabras en el dataset de vectores de word embeddings de glove
-		- lang -- String, lenguaje en el que está la noticia
-
-		Retorna:
-		- str -- String, strng de la noticia preprocesada
-	"""
-	languages = {'en':'english', 'es':'spanish'}
-	lang =languages[lang]
-	# Quitar signos
-	cad = replace_bad_characters(cad)
-	# Minuscula
-	cad = cad.lower()
-	# Stop words y varios espacios
-	cad = delete_stop_words(cad, lang)
-	# Stemming
-	# cad = stem_words(cad)
-	# lemmatization
-	# cad = lemmatize_words(cad)
-	# Delete words who aren't in glove dictioanry
-	cad = only_glove_words(cad, words_in_glove)
-	return cad
 
 def get_word_to_frecuency(data):
 	"""
@@ -196,7 +168,6 @@ def get_word_to_frecuency(data):
 	word_to_frecuency = {}
 	cont=0
 	for l in data:
-		print(cont)
 		for w in l.split(' '):
 			if w in list(word_to_frecuency.keys()):
 				word_to_frecuency[w] += 1
@@ -245,6 +216,35 @@ def get_raw_data(title, content):
 	sentences = tokenizer.tokenize(content)
 	return title + ''.join(sentences[:5])
 
+def transform_string(cad, words_in_glove, lang, source):
+	"""
+		Función que preprocesa las noticias, recibe el string de la noticia completa y retorna el string preprocesado
+
+		Parámetros:
+		- str -- String, string de la noticia que se va a preprocesar
+		- words_in_glove -- Lista, lista de palabras en el dataset de vectores de word embeddings de glove
+		- lang -- String, lenguaje en el que está escrita la noticia
+
+		Retorna:
+		- str -- String, strng de la noticia preprocesada
+	"""
+	assert type(source) == str
+	languages = {'en':'english', 'es':'spanish'}
+	lang =languages[lang]
+	# Quitar signos y caracteres que no se van a tener en cuenta
+	cad = replace_bad_characters(cad)
+	# Minuscula
+	cad = cad.lower()
+	# Stop words y varios espacios
+	cad = delete_stop_words(cad, lang)
+	# Stemming
+	cad = stem_words(cad)
+	# lemmatization
+	# cad = lemmatize_words(cad)
+	# Delete words that aren't in embedding dictionary
+	cad = only_glove_words(cad, words_in_glove, source)
+	return cad
+
 
 def main():
 	"""
@@ -256,21 +256,27 @@ def main():
 	"""
 	# dfr = pd.read_csv("newsDatabaseComplete14.csv", header=0, index_col=0)
 	dfr = pd.read_csv("newsDatabaseComplete14_filtered.csv", header=0, index_col=0)
-	vdf = pd.read_csv('variationsImmediately.csv', header=0, index_col=0)
-	variations = {}
-	walls = {}
-	equitys = []
-	total = []
+	# dfr = pd.read_csv("newsDatabaseComplete14_filtered_augmented.csv", header=0, index_col=0)
+	#vdf = pd.read_csv('variationsImmediately.csv', header=0, index_col=0)
+	#variations = {}
+	#walls = {}
+	#equitys = []
+	#total = []
 	words_in_glove = read_embedd_vectors(0) ############# change for different embedding
-	idxs = []
+	#idxs = []
 
 	supported_langs=['en']
 
-	for eq in list(set(dfr['related to'].values)):
-		equitys.append(eq)
-		variations[eq] = []
+	# eliminate non-classes examples
+	dfr.dropna(subset=['classes'], inplace=True)
+	dfr.index = np.arange(dfr.shape[0])
 
 	# implementation before asking people for classes
+
+	#for eq in list(set(dfr['related to'].values)):
+	#	equitys.append(eq)
+	#	variations[eq] = []
+
 	# for i in range(dfr.shape[0]):
 	# 	print(i)
 	# 	step = vdf[vdf['date'] == dfr.loc[i, 'date'].split(' ')[0]]
@@ -286,17 +292,18 @@ def main():
 	# 		total.append(variation)
 	# 		idxs.append(i)
 
-	# implemntation asking people for classes
+	# implmentation asking people for classes
 	for i in range(dfr.shape[0]):
 		lang = detect(dfr['content'][i])
 		if(lang in supported_langs):
 			tmp = get_raw_data(dfr['title'][i], dfr['content'][i])
-			dfr.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang)
+			dfr.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang, dfr['source'][i])
 			#variation = step[step['related to'] == dfr.loc[i, 'related to']]['variation'].values[0]
 			#variations[dfr.loc[i, 'related to']].append(variation)
 			#total.append(variation)
 			#idxs.append(i)
 		else:
+			print('language: %s not supported. Notice id: %d' % (lang, i))
 			dfr.loc[i, 'content'] = ''
 
 	# implementation before asking people for classes
@@ -328,21 +335,20 @@ def main():
 
 	# dfr['classes'] = pd.Series(classes_arr, index=dfr.index, dtype=np.int64)
 
-	# eliminate non-classes examples
+	# # eliminate non-classes examples
 	# dfr['classes'].replace(-1, np.nan, inplace=True)
-	dfr.dropna(subset=['classes'], inplace=True)
-	dfr.index = np.arange(dfr.shape[0])
 
 	word_to_frecuency = get_word_to_frecuency(dfr['content'])
 
-	dfr = eliminate_less_frequent_words(dfr, 5, word_to_frecuency)
+	# dfr = eliminate_less_frequent_words(dfr, 5, word_to_frecuency)
+	dfr = eliminate_less_frequent_words(dfr, 5*6, word_to_frecuency)
 
 	# eliminate empty strings from dataframe
 	dfr['content'].replace('', np.nan, inplace=True)
 	dfr.dropna(subset=['content'], inplace=True)
 	dfr.index = np.arange(dfr.shape[0])
 
-	# formating problem with pytoch
+	# formating problem with pytorch
 	dfr['classes'].replace(1, 2, inplace=True)
 	dfr['classes'].replace(0, 1, inplace=True)
 	dfr['classes'].replace(-1, 0, inplace=True)
