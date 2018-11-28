@@ -41,21 +41,28 @@ class DataManager():
 
 		# Load data
 		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
-		self.df = pd.read_csv('data14Glove_noStem.csv')
+		# self.df = pd.read_csv('data14Glove_noStem.csv')
 		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
 		#self.df = pd.read_csv('data14Deps.csv', error_bad_lines=False)
+		self.df = pd.read_csv('data14Glove_noStem_train.csv', nrows=5000)
+		self.dfte = pd.read_csv('data14Glove_noStem_test.csv')
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
 		mini = min(self.df.groupby('classes').count()['date'].values)
 		# title is inside content
 		self.df = self.df.groupby('classes').head(mini)[['date', 'content', 'classes', 'related to']]
 		self.df.index = np.arange(self.df.shape[0])
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
+
 		self.df['content'] = self.df.content.apply(lambda x: x.strip())
+		self.dfte['content'] = self.dfte.content.apply(lambda x: x.strip())
 
 		# Construct vocabulary
 		self.words = Counter()
 		self.max_len = 0
 		for sent in self.df.content.values:
+			self.words.update(w.lower() for w in sent.split())
+			self.max_len = max(len(sent.split()), self.max_len)
+		for sent in self.dfte.content.values:
 			self.words.update(w.lower() for w in sent.split())
 			self.max_len = max(len(sent.split()), self.max_len)
 		# Sort vocabulary by frecuency
@@ -69,6 +76,7 @@ class DataManager():
 
 		# Index content
 		self.df['contentidx'] = self.df.content.apply(self.indexer)
+		self.dfte['contentidx'] = self.dfte.content.apply(self.indexer)
 
 		# embedd vector map
 		self.word2embedd = self.read_embedd_vectors(0)
@@ -88,7 +96,7 @@ class DataManager():
 			- word2embedd -- Diccionaro, diccionario que tiene como claves las palabras de corpus y como vaor los embddings de las palabras
 		"""
 
-		return self.df, self.words, self.max_len, self.idx2word, self.word2embedd
+		return self.df, self.dfte, self.words, self.max_len, self.idx2word, self.word2embedd
 
 
 	def indexer(self, s):
@@ -355,7 +363,7 @@ def split_uniformly(df, train_size):
 	return trdf, tedf
 
 
-def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads):
+def fit(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads):
 	"""
 		Función para entrenar un modelo
 
@@ -379,7 +387,8 @@ def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embe
 			otro 15% a si la media movil de la exactitud de testing es mayor al 34% y el 20% restante a si se cumplen las últimas dos condiciones.
 
 	"""
-	df_train, df_test = split_uniformly(df, train_size)
+	from termcolor import colored
+	# df_train, df_test = split_uniformly(df, train_size)
 
 	#import data_augmentation
 	#df_train = data_augmentation.augment_data(df_train)
@@ -389,16 +398,16 @@ def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embe
 		batch_size += 1
 
 	trdv = VectorizeData(df_train, max_len, embedding_dim, embedd_dic)
-	train_dl = DataLoader(trdv, batch_size=batch_size)
+	train_dl = DataLoader(trdv, batch_size=batch_size)#, num_workers=4)
 	tevd = VectorizeData(df_test, max_len, embedding_dim, embedd_dic)
-	test_dl = DataLoader(tevd, batch_size=batch_size)
+	test_dl = DataLoader(tevd, batch_size=batch_size)#, num_workers=4)
 
 	historic_acc = []
 	historic_train_acc = []
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 	# for regularization
-	lambda_term = 0.05
+	lambda_term = 0.0005
 
 	for epoch in range(n_epochs):
 		start = time.time()
@@ -411,9 +420,10 @@ def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embe
 		
 		# train
 		for X, y, lengths, _, _ in train_dl:
-			X, y, lengths = sort_batch(X,y,lengths)
 			X = Variable(X).to(device)
 			y = Variable(y).long().to(device)
+			lengths = lengths.to(device)
+			X, y, lengths = sort_batch(X,y,lengths)
 			lengths = lengths.numpy()
 			
 			opt.zero_grad()
@@ -479,11 +489,16 @@ def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embe
 		modified_test_acc = (modified_test_acc * 0.5 + (modified_train_acc >= 0.45) * 0.15 + (modified_test_acc > 0.34) * 0.15 + (modified_train_acc >= 0.45 and modified_test_acc > 0.34) * 0.2)
 
 		if(verbose > 0):
-			print(' Epoch {}: Train loss: {} acc: {}'.format(epoch + 1, train_loss, train_acc))
-			print('test_loss: {} acc: {}'.format(test_loss, test_acc))
+			print(' Epoch', epoch + 1, ': Train loss: ', train_loss, ' acc: ', colored(train_acc, 'green'))
+			print('test_loss: ', test_loss, ' acc: ', colored(test_acc, 'yellow'))
 			print('modified test acc: {}'.format(modified_test_acc))
 			print('time elapsed: %f' % (time.time() - start), end='\n\n')
 
+	# # calculte quantity of params in model
+	#acum=0
+	#for i in model.parameters():
+	#	acum += i.numel()
+	#print('cantidad de parametros: ', acum)
 	
 	if(bads):
 		onedv = VectorizeData(df_test, max_len, embedding_dim, embedd_dic)
@@ -496,7 +511,7 @@ def fit(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embe
 			y = Variable(y).long()
 			pred = model(X, lengths.numpy(), train=False)
 			pred_idx = torch.max(pred, dim=1)[1]
-			if(int(pred_idx) != int(y)):
+			if(int(pred_idx.cpu()) != int(y)):
 				salidas.append([int(pred_idx), int(y), related[0], content, pred.detach().numpy()])
 
 		dfu = pd.DataFrame(salidas)
@@ -648,15 +663,15 @@ def main():
 		raise Exception('Debe ingresar un modelo')
 
 	dm = DataManager()
-	df, words, max_len, idx2word, word2embedd = dm.get_data()
+	df, dfte, words, max_len, idx2word, word2embedd = dm.get_data()
 	embedd_dic = get_embedd_dic(idx2word, word2embedd)
 	n_out = 3
 	train_size = 0.8
 	embedding_dim = len(word2embedd[list(word2embedd.keys())[0]])
-	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14, models.Model15]
+	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14, models.Model15, models.Model16]
 	id_model = int(args.model)
 	verbose = args.verbose
-	bads = True
+	bads = False
 
 	# # Parameters
 	if(type(args.parameters) == int):
@@ -683,20 +698,27 @@ def main():
 		# n_hidden =  13 # 84 # 77
 		# # weight_decay = 0.00005
 
-		# for new approach
-		batch_size = 116 # 116 # 67
+		# # for new approach
+		# # amazon GPU
+		# batch_size = 1000 # 116 # 67
+		# drop_p = 0.5 # 0.12180530013355763 # 0.5
+		# lr = 0.007 # 0.005 # 0.001 # 0.015143175534512585 # 0.008102095403861038
+		# n_epochs = 40 # 117 # 126
+		# n_hidden = 46 # 46 # 84
+		# weight_decay = 0.0 # 0.0001 # 0.01 # 0.0005
+		batch_size = 1000 # 116 # 67
 		drop_p = 0.5 # 0.12180530013355763 # 0.5
-		lr = 0.005 # 0.001 # 0.015143175534512585 # 0.008102095403861038
-		n_epochs = 40 # 117 # 126
-		n_hidden = 84 # 46 # 84
-		weight_decay = 0.01 # 0.01 # 0.0005
+		lr = 0.001 # 0.005 # 0.001 # 0.015143175534512585 # 0.008102095403861038
+		n_epochs = 60 # 117 # 126
+		n_hidden = 20 # 46 # 84
+		weight_decay = 0.0005 # 0.0001 # 0.01 # 0.0005
 
 	m = modelos[args.model](embedding_dim, n_hidden, n_out, drop_p)
 	opt = optim.Adam(m.parameters(), lr, weight_decay=weight_decay)
 	#loss_fn = nn.CrossEntropyLoss()
 	loss_fn = F.nll_loss
 
-	fit(m, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads)
+	fit(m, df, dfte, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads)
 
 
 if __name__ == '__main__':

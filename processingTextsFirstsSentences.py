@@ -5,6 +5,41 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from langdetect import detect
 
+def split_uniformly(df, train_size):
+	"""
+		Función que separa uniformemente los datos de entrada en training y testing, es decir, el [train_size]% de cada clase irá al set de ntrenamiento y el 1-[train_size]% irá al set de testing
+
+		Parámetros:
+		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
+
+		Retorna:
+		- trdf -- DataFrame de pandas, dataframe con los datos de entrenamiento
+		- tedf -- DataFrame de pandas, dataframe con los datos de testing
+
+	"""
+
+	trdfc = []
+	tedfc = []
+	for c in np.unique(df.classes):
+		dfc = df[df['classes'] == c]
+		wall = int(dfc.shape[0]*train_size)
+		trdfc.append(dfc[:wall])
+		tedfc.append(dfc[wall:])
+
+	trdf = pd.DataFrame()
+	tedf = pd.DataFrame()
+
+	for i in range(len(trdfc)):
+		trdf = trdf.append(trdfc[i], ignore_index=True)
+		tedf = tedf.append(tedfc[i], ignore_index=True)
+
+	# shuffle datasets
+	trdf = trdf.sample(frac=1.0).reset_index(drop=True)
+	tedf = tedf.sample(frac=1.0).reset_index(drop=True)
+
+	return trdf, tedf
+
 def delete_weard_values(data):
 	"""
 		Función que elimina los valores atipicos de un conjunto de datos, lo hace mediante el rango intercuartilico
@@ -271,6 +306,12 @@ def main():
 	dfr.dropna(subset=['classes'], inplace=True)
 	dfr.index = np.arange(dfr.shape[0])
 
+	dftr, dfte = split_uniformly(dfr, 0.8)
+
+	# augment_data
+	import data_augmentation
+	dftr = data_augmentation.augment_data(dftr)
+
 	# implementation before asking people for classes
 
 	#for eq in list(set(dfr['related to'].values)):
@@ -293,18 +334,31 @@ def main():
 	# 		idxs.append(i)
 
 	# implmentation asking people for classes
-	for i in range(dfr.shape[0]):
-		lang = detect(dfr['content'][i])
+	for i in range(dftr.shape[0]):
+		lang = detect(dftr['content'][i])
 		if(lang in supported_langs):
-			tmp = get_raw_data(dfr['title'][i], dfr['content'][i])
-			dfr.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang, dfr['source'][i])
+			tmp = get_raw_data(dftr['title'][i], dftr['content'][i])
+			dftr.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang, dftr['source'][i])
 			#variation = step[step['related to'] == dfr.loc[i, 'related to']]['variation'].values[0]
 			#variations[dfr.loc[i, 'related to']].append(variation)
 			#total.append(variation)
 			#idxs.append(i)
 		else:
 			print('language: %s not supported. Notice id: %d' % (lang, i))
-			dfr.loc[i, 'content'] = ''
+			dftr.loc[i, 'content'] = ''
+
+	for i in range(dfte.shape[0]):
+		lang = detect(dfte['content'][i])
+		if(lang in supported_langs):
+			tmp = get_raw_data(dfte['title'][i], dfte['content'][i])
+			dfte.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang, dfte['source'][i])
+			#variation = step[step['related to'] == dfr.loc[i, 'related to']]['variation'].values[0]
+			#variations[dfr.loc[i, 'related to']].append(variation)
+			#total.append(variation)
+			#idxs.append(i)
+		else:
+			print('language: %s not supported. Notice id: %d' % (lang, i))
+			dfte.loc[i, 'content'] = ''
 
 	# implementation before asking people for classes
 	# classes_arr = []
@@ -338,25 +392,47 @@ def main():
 	# # eliminate non-classes examples
 	# dfr['classes'].replace(-1, np.nan, inplace=True)
 
-	word_to_frecuency = get_word_to_frecuency(dfr['content'])
+
+	# train
+	word_to_frecuency = get_word_to_frecuency(dftr['content'])
 
 	# dfr = eliminate_less_frequent_words(dfr, 5, word_to_frecuency)
-	dfr = eliminate_less_frequent_words(dfr, 5*6, word_to_frecuency)
+	dftr = eliminate_less_frequent_words(dftr, 5*6, word_to_frecuency)
 
 	# eliminate empty strings from dataframe
-	dfr['content'].replace('', np.nan, inplace=True)
-	dfr.dropna(subset=['content'], inplace=True)
-	dfr.index = np.arange(dfr.shape[0])
+	dftr['content'].replace('', np.nan, inplace=True)
+	dftr.dropna(subset=['content'], inplace=True)
+	dftr.index = np.arange(dftr.shape[0])
 
 	# formating problem with pytorch
-	dfr['classes'].replace(1, 2, inplace=True)
-	dfr['classes'].replace(0, 1, inplace=True)
-	dfr['classes'].replace(-1, 0, inplace=True)
+	dftr['classes'].replace(1, 2, inplace=True)
+	dftr['classes'].replace(0, 1, inplace=True)
+	dftr['classes'].replace(-1, 0, inplace=True)
 
 	# dfr.to_csv('data14Deps.csv')
-	dfr.to_csv('data14Glove_noStem.csv') ########### change for different embedding
+	dftr.to_csv('data14Glove_noStem_train.csv') ########### change for different embedding
 
-	sns.barplot(x=dfr.classes.unique(),y=dfr.classes.value_counts())
+	
+	# test
+	word_to_frecuency = get_word_to_frecuency(dfte['content'])
+
+	# dfr = eliminate_less_frequent_words(dfr, 5, word_to_frecuency)
+	dfte = eliminate_less_frequent_words(dfte, 5*6, word_to_frecuency)
+
+	# eliminate empty strings from dataframe
+	dfte['content'].replace('', np.nan, inplace=True)
+	dfte.dropna(subset=['content'], inplace=True)
+	dfte.index = np.arange(dfte.shape[0])
+
+	# formating problem with pytorch
+	dfte['classes'].replace(1, 2, inplace=True)
+	dfte['classes'].replace(0, 1, inplace=True)
+	dfte['classes'].replace(-1, 0, inplace=True)
+
+	# dfr.to_csv('data14Deps.csv')
+	dfte.to_csv('data14Glove_noStem_test.csv') ########### change for different embedding
+
+	sns.barplot(x=dftr.classes.unique(),y=dftr.classes.value_counts())
 	plt.show()
 
 	# d = ['.', ';', ',', '’', ':', ' ', '/', '&', '”', '“', '"', "(", ")", "%", "@", "–", "-"]

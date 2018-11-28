@@ -23,9 +23,14 @@ def main():
 		lo que hace es separar solo los embedding que se usan en un arhcivo aparte para leer de este y no del total de embeddings.
 	"""
 	# df = pd.read_csv('data14Glove.csv')
-	df = pd.read_csv('data14Glove_noStem.csv')
+	# df = pd.read_csv('data14Glove_noStem.csv')
+	df = pd.read_csv('data14Glove_noStem_train.csv')
+	dfte = pd.read_csv('data14Glove_noStem_test.csv')
 	words = []
 	for c in df['content']:
+		words.extend(c.lower().split(' '))
+		words = list(set(words))
+	for c in dfte['content']:
 		words.extend(c.lower().split(' '))
 		words = list(set(words))
 	f2 = open('glove.6B.50d.selected.txt', 'w', encoding='utf8')

@@ -29,7 +29,7 @@ class Model0(nn.Module):
 		self.out = nn.Linear(self.n_hidden*2, self.n_out).to(self.device)
 
 	def forward(self, seq, lengths, train=False):
-		self.h = self.init_hidden(seq.size(1), gpu)
+		self.h = self.init_hidden(seq.size(1))
 		embs = torch.tensor(seq).float().to(self.device)
 		if train:
 			embs = self.drop(embs) # Dropout
@@ -58,7 +58,7 @@ class Model1(nn.Module):
 		self.out = nn.Linear(self.n_hidden, self.n_out).to(self.device)
 
 	def forward(self, seq, lengths, train=False):
-		self.h = self.init_hidden(seq.size(1), gpu)
+		self.h = self.init_hidden(seq.size(1))
 		embs = torch.tensor(seq).float().to(self.device)
 		if train:
 			embs = self.drop(embs)
@@ -114,7 +114,7 @@ class Model3(nn.Module):
 		self.out = nn.Linear(self.n_hidden*2, self.n_out).to(self.device)
 
 	def forward(self, seq, lengths, train=False):
-		self.h = self.init_hidden(seq.size(1), gpu)
+		self.h = self.init_hidden(seq.size(1))
 		embs = torch.tensor(seq).float().to(self.device)
 		embs = pack_padded_sequence(embs, lengths)
 		rnn_out, self.h = self.rnn(embs, self.h)
@@ -142,7 +142,7 @@ class Model4(nn.Module):
 		self.out = nn.Linear(self.n_hidden, self.n_out).to(self.device)
 
 	def forward(self, seq, lengths, train=False):
-		self.h = self.init_hidden(seq.size(1), gpu)
+		self.h = self.init_hidden(seq.size(1))
 		embs = torch.tensor(seq).float().to(self.device)
 		if train:
 			embs = self.drop(embs)
@@ -387,6 +387,7 @@ class Model14(nn.Module):
 		rnn_out, self.h = self.rnn(embs)
 		rnn_out, lengths = pad_packed_sequence(rnn_out)
 		outp = self.out(self.h[-1][-1].view(self.h[-1].shape[1:3]))
+		# outp = self.out(self.h[-2][-1].view(self.h[-2].shape[1:3]))
 		return F.log_softmax(outp, dim=-1)
 
 # Model with: dropout, rnn, linear(out=h)
@@ -410,6 +411,29 @@ class Model15(nn.Module):
 		#if train:
 		#	outp = self.out(self.drop(self.h[-1]).view(self.h[-1].shape[1:3]))
 		#else:
-		#	outp = self.out(self.h[-1].view(self.h[-1].shape[1:3]))
 		outp = self.out(self.h.view(self.h.shape[1:3]))
+		return F.log_softmax(outp, dim=-1)
+
+# Model with: dropout, gru, linear(out=h)
+class Model16(nn.Module):
+	def __init__(self, embedding_dim, n_hidden, n_out, drop_p):
+		super().__init__()
+		self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+		self.embedding_dim, self.n_hidden, self.n_out, self.n_layers = embedding_dim, n_hidden, n_out, 1
+		self.drop = nn.Dropout(p=drop_p).to(self.device)
+		# self.bn = nn.BatchNorm1d(self.n_hidden).to(self.device)
+		self.rnn = nn.GRU(self.embedding_dim, self.n_hidden, num_layers=self.n_layers).to(self.device)
+		self.out = nn.Linear(self.n_hidden, self.n_out).to(self.device)
+
+	def forward(self, seq, lengths, train=False):
+		embs = torch.tensor(seq).float().to(self.device)
+		# if train:
+		#	embs = self.drop(embs)
+		embs = pack_padded_sequence(embs, lengths)
+		rnn_out, self.h = self.rnn(embs)
+		rnn_out, lengths = pad_packed_sequence(rnn_out)
+		if train:
+			outp = self.out(self.drop(self.h).view(self.h.shape[1:3]))
+		else:
+			outp = self.out(self.h.view(self.h.shape[1:3]))
 		return F.log_softmax(outp, dim=-1)
