@@ -93,7 +93,7 @@ class DataManager():
 			- words -- Lista, listado de las palabras en el corpus
 			- max_len -- Entero, indica el mayor número de palabras dentro de una noticia o ejemplo
 			- idx2word -- Diccionario, diccionario que tiene como claves indices y como vores las palabras del corpus, asocia cada palabra del corpus con un indice especifico
-			- word2embedd -- Diccionaro, diccionario que tiene como claves las palabras de corpus y como vaor los embddings de las palabras
+			- word2embedd -- Diccionaro, diccionario que tiene como claves las palabras de corpus y como valor los embddings de las palabras
 		"""
 
 		return self.df, self.dfte, self.words, self.max_len, self.idx2word, self.word2embedd
@@ -158,16 +158,17 @@ def get_embedd_dic(idx2word, word2embedd):
 		- word2embedd -- Dicconaro, las claves son palabras en el corpus, están todas. Los valores son los vectores de embedding de cada palabra
 
 		Retorna:
-		- dic -- Arreglo de numpy, arreglo con todos los vectores de embedding delas paabras en el corpus, 
+		- arr -- Arreglo de numpy, arreglo con todos los vectores de embedding delas paabras en el corpus, 
 	"""
-	dic = []
+	arr = np.zeros((len(idx2word), word2embedd[idx2word[0]].size))
 
 	for i in sorted(idx2word.keys()):
 		################ NOTA: si alguna palabra no está en el word2embedd, recuerde actualizar las palabras seleccionadas ejecutando only_words_in_corpus.py con el archivo que se esté trabajando
-		dic.append(word2embedd[idx2word[i]])
+		arr[i, :] = word2embedd[idx2word[i]]
 
-	dic =  np.array(dic, dtype=np.float32)
-	return dic
+	# arr =  np.array(arr, dtype=np.float32)
+	arr = arr.astype(np.float32)
+	return arr
 
 def embedd(idxs, default, new2, embedd_dic):
 	"""
@@ -369,7 +370,8 @@ def fit(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, t
 
 		Parámetros:
 		- model -- Classe, modelo que se va a entrenar, la case debe venir del archivo models.py
-		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- df_train -- DataFrame de pandas, dataframe con los datos de entrenamiento
+		- df_test -- DataFrame de pandas, dataframe con los datos de prueba
 		- loss_fn -- Function, función de perdida apra el modelo, por default es NLL (neative log likelihood)
 		- opt -- Optimizador, optimizador de pytorch que se encargara de actualizar los pesos del modelo, por default es Adam.
 		- n_epochs -- Entero, número de epocas de entrenamiento
@@ -522,14 +524,133 @@ def fit(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, t
 
 	return modified_test_acc
 
-def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads):
+# def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads):
+# 	"""
+# 		Función objetivo que sirve para la optimización bayesiana, sirve para ejecuar el modelo con los parámetros recibidos, calcular el error de esta ejecución y así decidir
+# 		cuales parámetros son mejores.
+
+# 		Parámetros:
+# 		- params -- Diccionario, contien los parametros para la ejecución, estos parámetros son dados por la libreria de optimización bayesiana (hyperopt) dentro de un espacio previamente definido
+# 		- df -- DataFrame de pandas, dataframe con los datos a procesar
+# 		- max_len -- Entero, máxima longitud de una entrada
+# 		- n_out -- Entero, número de clases para clasificar la entrada
+# 		- embedding_dim -- Entero, dimensión del word embedding
+# 		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
+# 		- id_model -- Entero, id del modelo que se va a entrenar
+# 		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
+# 		- verbose -- Entero, nivel de verbosidad de la ejecución
+# 		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
+		
+# 		Retorna:
+# 		- diccionario -- Diccionario, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el esatdo de la ejecución. Todo esto es necesario para la libreria
+
+# 	"""
+# 	# Keep track of evals
+# 	global ITERATION
+	
+# 	ITERATION += 1
+# 	if(verbose > 0): print(ITERATION, params)
+
+# 	# Make sure parameters that need to be integers are integers
+# 	for parameter_name in ['n_hidden', 'batch_size', 'n_epochs']:
+# 		params[parameter_name] = int(params[parameter_name])
+
+# 	# Make sure parameters that need to be float are float
+# 	for parameter_name in ['lr', 'drop_p']:
+# 		params[parameter_name] = float(params[parameter_name])
+	
+# 	out_file = 'gbm_trials.csv'
+
+# 	start = timer()
+
+# 	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14]
+# 	m = modelos[id_model](embedding_dim, params['n_hidden'], n_out, params['drop_p'])
+# 	opt = optim.Adam(m.parameters(), params['lr'])#, weight_decay=params['weight_decay'])
+# 	acc = fit(m, df, F.nll_loss, opt, params['n_epochs'], max_len, params['batch_size'], train_size, embedding_dim, embedd_dic, verbose, bads)
+
+# 	# calculate no-score
+# 	no_score = 1 - acc # change from acc to loss. If first raises, second downs.
+# 	run_time = timer() - start
+
+# 	# Write to the csv file ('a' means append)
+# 	of_connection = open(out_file, 'a')
+# 	writer = csv.writer(of_connection)
+# 	writer.writerow([no_score, params, ITERATION, run_time])
+# 	of_connection.close()
+
+# 	# Dictionary with information for evaluation
+# 	return {'loss': no_score, 'params': params, 'iteration': ITERATION,
+# 			'train_time': run_time, 'status': STATUS_OK}
+
+# def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size, id_model, embedd_dic, verbose ,bads):
+# 	"""
+# 		Función para encontrar los parámetros optimos para un modelo
+
+# 		Parámetros:
+# 		- MAX_EVALS -- Entero, número máximo  de iteraciones de la optimización bayesiana
+# 		- n_out -- Entero, número de clases para clasificar la entrada
+# 		- max_len -- Entero, máxima longitud de una entrada
+# 		- df -- DataFrame de pandas, dataframe con los datos a procesar
+# 		- embedding_dim -- Entero, dimensión del word embedding
+# 		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
+# 		- id_model -- Entero, id del modelo que se va a entrenar
+# 		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
+# 		- verbose -- Entero, nivel de verbosidad de la ejecución
+# 		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
+
+# 		Retorna: 
+# 		- best -- Diccionario, diccionario con los mejores parámetros encontrados en la optimización bayesiana
+
+# 	"""
+# 	global ITERATION
+# 	ITERATION = 0
+
+# 	# space
+# 	# big
+# 	space = {'batch_size': hp.quniform('batch_size', 5, 120, 1),
+# 			'drop_p': hp.uniform('drop_p', 0.0, 1.0),
+# 			'lr': hp.uniform('lr', 0.00001, 0.8),
+# 			'n_epochs': hp.quniform('n_epochs', 5, 75, 1),
+# 			'n_hidden': hp.quniform('n_hidden', 5, 300, 1)}
+# 	# space = {'batch_size': hp.quniform('batch_size', 68, 100, 1),
+# 	# 		'drop_p': hp.uniform('drop_p', 0.01, 0.4),
+# 	# 		'lr': hp.uniform('lr', 0.001, 0.1),
+# 	# 		'n_epochs': hp.quniform('n_epochs', 95, 130, 1),
+# 	# 		'n_hidden': hp.quniform('n_hidden', 15, 70, 1)}
+
+# 	# Keep track of results
+# 	bayes_trials = Trials()
+
+# 	# File to save first results
+# 	out_file = 'gbm_trials.csv'
+# 	of_connection = open(out_file, 'w')
+# 	writer = csv.writer(of_connection)
+
+# 	# Write the headers to the file
+# 	writer.writerow(['no-score', 'params', 'iteration', 'train_time'])
+# 	of_connection.close()
+
+# 	# Run optimization
+# 	best = fmin(fn = lambda x: objective(x, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads), space = space, algo = tpe.suggest, max_evals = MAX_EVALS, trials = bayes_trials, rstate = np.random.RandomState(np.random.randint(100)))
+
+# 	# store best results
+# 	of_connection = open('bests.txt', 'a')
+# 	writer = csv.writer(of_connection)
+# 	bayes_trials_results = sorted(bayes_trials.results, key = lambda x: x['loss'])
+# 	writer.writerow([bayes_trials_results[0]['loss'], bayes_trials_results[0]['params']['n_hidden'], bayes_trials_results[0]['params']['batch_size'], bayes_trials_results[0]['params']['n_epochs'], bayes_trials_results[0]['params']['lr'], bayes_trials_results[0]['params']['drop_p'], MAX_EVALS])
+# 	of_connection.close()
+
+# 	return best
+
+def objective(params, df_train, df_test, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads):
 	"""
 		Función objetivo que sirve para la optimización bayesiana, sirve para ejecuar el modelo con los parámetros recibidos, calcular el error de esta ejecución y así decidir
 		cuales parámetros son mejores.
 
 		Parámetros:
 		- params -- Diccionario, contien los parametros para la ejecución, estos parámetros son dados por la libreria de optimización bayesiana (hyperopt) dentro de un espacio previamente definido
-		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- df_train -- DataFrame de pandas, dataframe con los datos de entrenamiento
+		- df_test -- DataFrame de pandas, dataframe con los datos de prueba
 		- max_len -- Entero, máxima longitud de una entrada
 		- n_out -- Entero, número de clases para clasificar la entrada
 		- embedding_dim -- Entero, dimensión del word embedding
@@ -540,14 +661,11 @@ def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, e
 		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
 		
 		Retorna:
-		- diccionario -- Diccioanrio, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el esatdo de la ejecución. Todo esto es necesario para la libreria
+		- diccionario -- Diccionario, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el esatdo de la ejecución. Todo esto es necesario para la libreria
 
 	"""
-	# Keep track of evals
 	global ITERATION
-	
 	ITERATION += 1
-	if(verbose > 0): print(ITERATION, params)
 
 	# Make sure parameters that need to be integers are integers
 	for parameter_name in ['n_hidden', 'batch_size', 'n_epochs']:
@@ -564,7 +682,7 @@ def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, e
 	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14]
 	m = modelos[id_model](embedding_dim, params['n_hidden'], n_out, params['drop_p'])
 	opt = optim.Adam(m.parameters(), params['lr'])#, weight_decay=params['weight_decay'])
-	acc = fit(m, df, F.nll_loss, opt, params['n_epochs'], max_len, params['batch_size'], train_size, embedding_dim, embedd_dic, verbose, bads)
+	acc = fit(m, df_train, df_test, F.nll_loss, opt, params['n_epochs'], max_len, params['batch_size'], train_size, embedding_dim, embedd_dic, verbose, bads)
 
 	# calculate no-score
 	no_score = 1 - acc # change from acc to loss. If first raises, second downs.
@@ -577,10 +695,10 @@ def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, e
 	of_connection.close()
 
 	# Dictionary with information for evaluation
-	return {'loss': no_score, 'params': params, 'iteration': ITERATION,
-			'train_time': run_time, 'status': STATUS_OK}
+	return no_score
 
-def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size, id_model, embedd_dic, verbose ,bads):
+
+def bayes_optimization(MAX_EVALS, n_out, max_len, df_train, df_test, embedding_dim, train_size, id_model, embedd_dic, verbose ,bads):
 	"""
 		Función para encontrar los parámetros optimos para un modelo
 
@@ -588,7 +706,8 @@ def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size,
 		- MAX_EVALS -- Entero, número máximo  de iteraciones de la optimización bayesiana
 		- n_out -- Entero, número de clases para clasificar la entrada
 		- max_len -- Entero, máxima longitud de una entrada
-		- df -- DataFrame de pandas, dataframe con los datos a procesar
+		- df_train -- DataFrame de pandas, dataframe con los datos de entrenamiento
+		- df_test -- DataFrame de pandas, dataframe con los datos de prueba
 		- embedding_dim -- Entero, dimensión del word embedding
 		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
 		- id_model -- Entero, id del modelo que se va a entrenar
@@ -600,45 +719,22 @@ def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size,
 		- best -- Diccionario, diccionario con los mejores parámetros encontrados en la optimización bayesiana
 
 	"""
+	from bayes_opt import BayesianOptimization
+
 	global ITERATION
 	ITERATION = 0
 
-	# space
-	# big
-	space = {'batch_size': hp.quniform('batch_size', 5, 120, 1),
-			'drop_p': hp.uniform('drop_p', 0.0, 1.0),
-			'lr': hp.uniform('lr', 0.00001, 0.8),
-			'n_epochs': hp.quniform('n_epochs', 5, 75, 1),
-			'n_hidden': hp.quniform('n_hidden', 5, 300, 1)}
-	# space = {'batch_size': hp.quniform('batch_size', 68, 100, 1),
-	# 		'drop_p': hp.uniform('drop_p', 0.01, 0.4),
-	# 		'lr': hp.uniform('lr', 0.001, 0.1),
-	# 		'n_epochs': hp.quniform('n_epochs', 95, 130, 1),
-	# 		'n_hidden': hp.quniform('n_hidden', 15, 70, 1)}
+	space = {'batch_size': (5.0, 120.0),
+			'drop_p': (0.0, 1.0),
+			'lr': (0.00001, 0.8),
+			'n_epochs': (1, 3), # 5-75
+			'n_hidden': (5, 300),
+			'weight_decay': (0.00001, 0.01)}
 
-	# Keep track of results
-	bayes_trials = Trials()
-
-	# File to save first results
-	out_file = 'gbm_trials.csv'
-	of_connection = open(out_file, 'w')
-	writer = csv.writer(of_connection)
-
-	# Write the headers to the file
-	writer.writerow(['no-score', 'params', 'iteration', 'train_time'])
-	of_connection.close()
-
-	# Run optimization
-	best = fmin(fn = lambda x: objective(x, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads), space = space, algo = tpe.suggest, max_evals = MAX_EVALS, trials = bayes_trials, rstate = np.random.RandomState(np.random.randint(100)))
-
-	# store best results
-	of_connection = open('bests.txt', 'a')
-	writer = csv.writer(of_connection)
-	bayes_trials_results = sorted(bayes_trials.results, key = lambda x: x['loss'])
-	writer.writerow([bayes_trials_results[0]['loss'], bayes_trials_results[0]['params']['n_hidden'], bayes_trials_results[0]['params']['batch_size'], bayes_trials_results[0]['params']['n_epochs'], bayes_trials_results[0]['params']['lr'], bayes_trials_results[0]['params']['drop_p'], MAX_EVALS])
-	of_connection.close()
-
-	return best
+	func = lambda batch_size, drop_p, lr, n_epochs, n_hidden, weight_decay: objective({'batch_size':batch_size, 'drop_p':drop_p, 'lr':lr, 'n_epochs':n_epochs, 'n_hidden':n_hidden, 'weight_decay':weight_decay}, df_train, df_test, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads)
+	optimizer = BayesianOptimization(f=func, pbounds=space, verbose=2, random_state=np.random.randint(np.random.randint(100)))
+	optimizer.maximize(init_points=0, n_iter=MAX_EVALS)
+	return optimizer.max['params']
 
 def main():
 	"""
@@ -667,7 +763,7 @@ def main():
 	embedd_dic = get_embedd_dic(idx2word, word2embedd)
 	n_out = 3
 	train_size = 0.8
-	embedding_dim = len(word2embedd[list(word2embedd.keys())[0]])
+	embedding_dim = len(word2embedd[next(iter(word2embedd))])
 	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14, models.Model15, models.Model16]
 	id_model = int(args.model)
 	verbose = args.verbose
@@ -675,11 +771,11 @@ def main():
 
 	# # Parameters
 	if(type(args.parameters) == int):
-		if(args.parameters == 0):
+		if(args.parameters <= 0):
 			MAX_EVALS = 1
 		else:
 			MAX_EVALS = args.parameters
-		best = bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size, id_model, embedd_dic, verbose, False)
+		best = bayes_optimization(MAX_EVALS, n_out, max_len, df, dfte, embedding_dim, train_size, id_model, embedd_dic, verbose, False)
 		print('best is: ', best)
 
 		batch_size = int(best['batch_size'])
@@ -687,7 +783,7 @@ def main():
 		lr = best['lr']
 		n_epochs = int(best['n_epochs'])
 		n_hidden = int(best['n_hidden'])
-		# weight_decay = best['weight_decay']
+		weight_decay = best['weight_decay']
 
 	else:
 		# for old approach
@@ -713,7 +809,7 @@ def main():
 		n_hidden = 20 # 46 # 84
 		weight_decay = 0.0005 # 0.0001 # 0.01 # 0.0005
 
-	m = modelos[args.model](embedding_dim, n_hidden, n_out, drop_p)
+	m = modelos[id_model](embedding_dim, n_hidden, n_out, drop_p)
 	opt = optim.Adam(m.parameters(), lr, weight_decay=weight_decay)
 	#loss_fn = nn.CrossEntropyLoss()
 	loss_fn = F.nll_loss
