@@ -24,8 +24,10 @@ def main():
 	"""
 	# df = pd.read_csv('data14Glove.csv')
 	# df = pd.read_csv('data14Glove_noStem.csv')
-	df = pd.read_csv('data14Glove_noStem_train.csv')
-	dfte = pd.read_csv('data14Glove_noStem_test.csv')
+	#df = pd.read_csv('data14Glove_noStem_train.csv')
+	#dfte = pd.read_csv('data14Glove_noStem_test.csv')
+	df = pd.read_csv('data14Glove_train.csv')
+	dfte = pd.read_csv('data14Glove_test.csv')
 	words = []
 	for c in df['content']:
 		words.extend(c.lower().split(' '))

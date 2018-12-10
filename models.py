@@ -366,7 +366,10 @@ class Model13(nn.Module):
 		#raise Exception('Debug')
 		#outp = self.out(self.h[-1].view(self.h[-1].shape[1:3]))
 		outp = self.out(self.h[-2].view(self.h[-2].shape[1:3]))
-		return F.log_softmax(outp, dim=-1)
+		# return F.log_softmax(outp, dim=-1)
+		l = nn.LogSoftmax(dim=-1)
+		# l = nn.Softmax(dim=-1)
+		return l(outp)
 
 # Model with: lstm*2(dropout), linear(out=h)
 class Model14(nn.Module):

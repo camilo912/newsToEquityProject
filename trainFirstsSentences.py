@@ -14,6 +14,7 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from torch.autograd import Variable
 
 from collections import Counter
+from matplotlib import pyplot as plt
 
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import KFold
@@ -44,8 +45,10 @@ class DataManager():
 		# self.df = pd.read_csv('data14Glove_noStem.csv')
 		# self.df = pd.read_csv('data14Glove.csv', error_bad_lines=False)
 		#self.df = pd.read_csv('data14Deps.csv', error_bad_lines=False)
-		self.df = pd.read_csv('data14Glove_noStem_train.csv', nrows=5000)
-		self.dfte = pd.read_csv('data14Glove_noStem_test.csv')
+		#self.df = pd.read_csv('data14Glove_noStem_train.csv', nrows=5000)
+		#self.dfte = pd.read_csv('data14Glove_noStem_test.csv')
+		self.df = pd.read_csv('data14Glove_train.csv')#, nrows=5000)
+		self.dfte = pd.read_csv('data14Glove_test.csv')
 		self.df = self.df.sample(frac=1.0).reset_index(drop=True)
 		mini = min(self.df.groupby('classes').count()['date'].values)
 		# title is inside content
@@ -406,10 +409,12 @@ def fit(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, t
 
 	historic_acc = []
 	historic_train_acc = []
+	historic_loss = []
+	historic_train_loss = []
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 	# for regularization
-	lambda_term = 0.0005
+	lambda_term = 0.00075
 
 	for epoch in range(n_epochs):
 		start = time.time()
@@ -490,6 +495,9 @@ def fit(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, t
 		# estabilidad + buen train_acc
 		modified_test_acc = (modified_test_acc * 0.5 + (modified_train_acc >= 0.45) * 0.15 + (modified_test_acc > 0.34) * 0.15 + (modified_train_acc >= 0.45 and modified_test_acc > 0.34) * 0.2)
 
+		historic_loss.append(test_loss)
+		historic_train_loss.append(train_loss)
+
 		if(verbose > 0):
 			print(' Epoch', epoch + 1, ': Train loss: ', train_loss, ' acc: ', colored(train_acc, 'green'))
 			print('test_loss: ', test_loss, ' acc: ', colored(test_acc, 'yellow'))
@@ -521,6 +529,17 @@ def fit(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, t
 		dfu.columns=['pred', 'true', 'related', 'content', 'probs']
 		dfu.to_csv('debug_bad_classifications.csv')
 
+	plt.plot(historic_train_loss, label='train loss')
+	plt.plot(historic_loss, label='test loss')
+	plt.suptitle('loss chart')
+	plt.legend()
+	plt.show()
+
+	plt.plot(historic_train_acc, label='train acc')
+	plt.plot(historic_acc, label='test acc')
+	plt.suptitle('acc chart')
+	plt.legend()
+	plt.show()
 
 	return modified_test_acc
 
@@ -802,17 +821,18 @@ def main():
 		# n_epochs = 40 # 117 # 126
 		# n_hidden = 46 # 46 # 84
 		# weight_decay = 0.0 # 0.0001 # 0.01 # 0.0005
-		batch_size = 1000 # 116 # 67
-		drop_p = 0.5 # 0.12180530013355763 # 0.5
+		batch_size = 500 # 116 # 67
+		drop_p = 0.0 # 0.12180530013355763 # 0.5
 		lr = 0.001 # 0.005 # 0.001 # 0.015143175534512585 # 0.008102095403861038
-		n_epochs = 60 # 117 # 126
+		n_epochs = 40 # 117 # 126
 		n_hidden = 20 # 46 # 84
-		weight_decay = 0.0005 # 0.0001 # 0.01 # 0.0005
+		weight_decay = 0.0 # 0.0001 # 0.01 # 0.0005
 
 	m = modelos[id_model](embedding_dim, n_hidden, n_out, drop_p)
 	opt = optim.Adam(m.parameters(), lr, weight_decay=weight_decay)
-	#loss_fn = nn.CrossEntropyLoss()
-	loss_fn = F.nll_loss
+	# loss_fn = nn.CrossEntropyLoss()
+	loss_fn = nn.NLLLoss()
+	# loss_fn = F.nll_loss
 
 	fit(m, df, dfte, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads)
 

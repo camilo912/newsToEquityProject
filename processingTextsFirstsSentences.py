@@ -5,7 +5,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from langdetect import detect
 
-def split_uniformly(df, train_size):
+def split_uniformly(df, train_size, classes):
 	"""
 		Función que separa uniformemente los datos de entrada en training y testing, es decir, el [train_size]% de cada clase irá al set de ntrenamiento y el 1-[train_size]% irá al set de testing
 
@@ -19,9 +19,13 @@ def split_uniformly(df, train_size):
 
 	"""
 
+	# shuffle original dataset
+	df = df.sample(frac=1.0).reset_index(drop=True)
+
 	trdfc = []
 	tedfc = []
-	for c in np.unique(df.classes):
+	# for c in np.unique(df.classes):
+	for c in classes:
 		dfc = df[df['classes'] == c]
 		wall = int(dfc.shape[0]*train_size)
 		trdfc.append(dfc[:wall])
@@ -73,7 +77,15 @@ def replace_bad_characters(str):
 		Retorna:
 		- str -- String, string de la noticia sin los caracteres indeseados
 	"""
+	# remove non printable characters
+	import string
+	str = ''.join(x for x in str if x in string.printable)
+
 	import re
+	# eliminate html tags
+	htmlr = re.compile('<.*?>')
+	str = re.sub(htmlr, '', str)
+	# eliminate bad characters
 	str = re.sub(r'([\t?¿\n*.;,’\r:/&”“"()$#!°\'><_—\[\]+©=‘…\v\b\f€£•´^])', r' ', str)
 	return str
 
@@ -181,7 +193,7 @@ def only_glove_words(str, words_in_glove, source):
 	std = ''
 	cont=0
 	for w in str.split(' '):
-		if(w in words_in_glove and w != '-' and w != source[:-1] and w != source and w != "–"):
+		if(w in words_in_glove and w != '-' and w != source[:-1] and w != source and w != "–" and w != '--' and w != '---'):
 			std += w + ' '
 		# else:
 		#	std += '_UNK '
@@ -290,7 +302,8 @@ def main():
 
 	"""
 	# dfr = pd.read_csv("newsDatabaseComplete14.csv", header=0, index_col=0)
-	dfr = pd.read_csv("newsDatabaseComplete14_filtered.csv", header=0, index_col=0)
+	# dfr = pd.read_csv("newsDatabaseComplete14_filtered.csv", header=0, index_col=0)
+	dfr = pd.read_csv("newsDatabaseComplete14_filtered_mixed.csv", header=0, index_col=0)
 	# dfr = pd.read_csv("newsDatabaseComplete14_filtered_augmented.csv", header=0, index_col=0)
 	#vdf = pd.read_csv('variationsImmediately.csv', header=0, index_col=0)
 	#variations = {}
@@ -301,12 +314,13 @@ def main():
 	#idxs = []
 
 	supported_langs=['en']
+	classes = [-1.0, 0.0, 1.0]
 
 	# eliminate non-classes examples
 	dfr.dropna(subset=['classes'], inplace=True)
 	dfr.index = np.arange(dfr.shape[0])
 
-	dftr, dfte = split_uniformly(dfr, 0.8)
+	dftr, dfte = split_uniformly(dfr, 0.8, classes)
 
 	# augment_data
 	import data_augmentation
@@ -410,7 +424,7 @@ def main():
 	dftr['classes'].replace(-1, 0, inplace=True)
 
 	# dfr.to_csv('data14Deps.csv')
-	dftr.to_csv('data14Glove_noStem_train.csv') ########### change for different embedding
+	dftr.to_csv('data14Glove_train.csv') ########### change for different embedding
 
 	
 	# test
@@ -430,9 +444,10 @@ def main():
 	dfte['classes'].replace(-1, 0, inplace=True)
 
 	# dfr.to_csv('data14Deps.csv')
-	dfte.to_csv('data14Glove_noStem_test.csv') ########### change for different embedding
+	dfte.to_csv('data14Glove_test.csv') ########### change for different embedding
 
-	sns.barplot(x=dftr.classes.unique(),y=dftr.classes.value_counts())
+	vals = dftr.classes.value_counts()
+	sns.barplot(x=[0, 1, 2],y=[vals[0], vals[1], vals[2]])
 	plt.show()
 
 	# d = ['.', ';', ',', '’', ':', ' ', '/', '&', '”', '“', '"', "(", ")", "%", "@", "–", "-"]
