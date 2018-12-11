@@ -7,7 +7,7 @@ from langdetect import detect
 
 def split_uniformly(df, train_size, classes):
 	"""
-		Función que separa uniformemente los datos de entrada en training y testing, es decir, el [train_size]% de cada clase irá al set de ntrenamiento y el 1-[train_size]% irá al set de testing
+		Función que separa uniformemente los datos de entrada en training y testing, es decir, el [train_size]% de cada clase irá al set de entrenamiento y el 1-[train_size]% irá al set de testing
 
 		Parámetros:
 		- df -- DataFrame de pandas, dataframe con los datos a procesar
@@ -47,10 +47,10 @@ def split_uniformly(df, train_size, classes):
 def delete_weard_values(data):
 	"""
 		Función que elimina los valores atipicos de un conjunto de datos, lo hace mediante el rango intercuartilico
-		Todo dato que este 1.5 rangos intercuartilicos por debajo del cuartil 1 o por encima del cuartil 3 es un valor atipico y por l otanto se elimina
+		Todo dato que este 1.5 rangos intercuartilicos por debajo del cuartil 1 o por encima del cuartil 3 es un valor atipico y por lo tanto se elimina
 
 		Parámetros:
-		- data -- Arrego de numpy | lista, conjunto de datos a los cauels se les va a eliminar los datos atipicos
+		- data -- Arrego de numpy | lista, conjunto de datos a los cuales se les va a eliminar los datos atipicos
 
 		Retorna:
 		- data -- Arreglo de numpy, conjunto de datos sin valores atipicos
@@ -249,7 +249,7 @@ def eliminate_less_frequent_words(df, limit, word_to_frecuency):
 
 def get_raw_data(title, content):
 	"""
-		Función que retorna el titulo y las tres primeras oraciones de una noticia, hace la eparación en oraciones mediante un tokenizer de la ibreria nltk
+		Función que retorna el título y las tres primeras oraciones de una noticia, hace la separación en oraciones mediante un tokenizer de la libreria nltk
 
 		Parámetros:
 		- title -- String, título de la noticia
@@ -295,23 +295,18 @@ def transform_string(cad, words_in_glove, lang, source):
 
 def main():
 	"""
-		Main del archivo, este archivo se encarga de preprocesar las noticias, "limpiar la data" en terminos geenrales. Hace las operaciones que estén definidas en el metodo
+		Main del archivo, este archivo se encarga de preprocesar las noticias, "limpiar la data" en terminos generales. Hace las operaciones que estén definidas en el método
 		transform_tring.
 
-		Primero ejecuta al funcion transform string, luego calcula las salidas de los ejemplos, luego elimina las palabras menos frecuentes y por ultimo guarda estos ultimos datos.
+		Primero ejecuta la funcion transform string, luego calcula las salidas de los ejemplos, luego elimina las palabras menos frecuentes y por último guarda estos últimos datos.
 
 	"""
 	# dfr = pd.read_csv("newsDatabaseComplete14.csv", header=0, index_col=0)
 	# dfr = pd.read_csv("newsDatabaseComplete14_filtered.csv", header=0, index_col=0)
 	dfr = pd.read_csv("newsDatabaseComplete14_filtered_mixed.csv", header=0, index_col=0)
 	# dfr = pd.read_csv("newsDatabaseComplete14_filtered_augmented.csv", header=0, index_col=0)
-	#vdf = pd.read_csv('variationsImmediately.csv', header=0, index_col=0)
-	#variations = {}
-	#walls = {}
-	#equitys = []
-	#total = []
+	
 	words_in_glove = read_embedd_vectors(0) ############# change for different embedding
-	#idxs = []
 
 	supported_langs=['en']
 	classes = [-1.0, 0.0, 1.0]
@@ -324,28 +319,7 @@ def main():
 
 	# augment_data
 	import data_augmentation
-	dftr = data_augmentation.augment_data(dftr)
-
-	# implementation before asking people for classes
-
-	#for eq in list(set(dfr['related to'].values)):
-	#	equitys.append(eq)
-	#	variations[eq] = []
-
-	# for i in range(dfr.shape[0]):
-	# 	print(i)
-	# 	step = vdf[vdf['date'] == dfr.loc[i, 'date'].split(' ')[0]]
-	# 	lang = detect(dfr['content'][i])
-	# 	if(len(step[step['related to'] == dfr.loc[i, 'related to']]) > 0 and lang in supported_langs):
-	# 		tmp = get_raw_data(dfr['title'][i], dfr['content'][i])
-	# 		dfr.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang)
-	# 		if('Standards:' in dfr.loc[i, 'content']): 
-	# 			print(dfr.loc[i, 'content'])
-	# 			raise Exception('Debug')
-	# 		variation = step[step['related to'] == dfr.loc[i, 'related to']]['variation'].values[0]
-	# 		variations[dfr.loc[i, 'related to']].append(variation)
-	# 		total.append(variation)
-	# 		idxs.append(i)
+	dftr, n_perms = data_augmentation.augment_data(dftr)
 
 	# implmentation asking people for classes
 	for i in range(dftr.shape[0]):
@@ -353,10 +327,6 @@ def main():
 		if(lang in supported_langs):
 			tmp = get_raw_data(dftr['title'][i], dftr['content'][i])
 			dftr.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang, dftr['source'][i])
-			#variation = step[step['related to'] == dfr.loc[i, 'related to']]['variation'].values[0]
-			#variations[dfr.loc[i, 'related to']].append(variation)
-			#total.append(variation)
-			#idxs.append(i)
 		else:
 			print('language: %s not supported. Notice id: %d' % (lang, i))
 			dftr.loc[i, 'content'] = ''
@@ -366,52 +336,16 @@ def main():
 		if(lang in supported_langs):
 			tmp = get_raw_data(dfte['title'][i], dfte['content'][i])
 			dfte.loc[i, 'content'] = transform_string(tmp, words_in_glove, lang, dfte['source'][i])
-			#variation = step[step['related to'] == dfr.loc[i, 'related to']]['variation'].values[0]
-			#variations[dfr.loc[i, 'related to']].append(variation)
-			#total.append(variation)
-			#idxs.append(i)
 		else:
 			print('language: %s not supported. Notice id: %d' % (lang, i))
 			dfte.loc[i, 'content'] = ''
-
-	# implementation before asking people for classes
-	# classes_arr = []
-	# means_and_desvs = {}
-	# dfr = dfr.loc[idxs, :]
-	# dfr.index=np.arange(dfr.shape[0])
-	# for eq in equitys:
-	# 	#### Implementacion de rango absoluto sin valores atipicos
-	# 	variations[eq] = delete_weard_values(variations[eq])
-	# 	walls[eq] = [min(variations[eq]), max(variations[eq])]
-
-	# import calcular_salidas
-	# classes_all = calcular_salidas.mani(0.6893894448599668)
-
-	# for i in range(dfr.shape[0]):
-	# 	eq = dfr.loc[i, 'related to']
-	# 	day = datetime.datetime.strptime(dfr.loc[i, 'date'].split(' ')[0], '%Y-%m-%d')
-	# 	tmp = classes_all.loc[classes_all['date'] == day, ['classe', 'related to']]
-	# 	step = tmp.loc[tmp['related to'] == eq, ['classe']].values
-	# 	if(len(step)>0):
-	# 		classes_arr.append(int(step[0]))
-	# 	else:
-	# 		classes_arr.append(-1)
-	# 	#print(tmp)
-
-	# 	#print(eq)
-	# 	# classes_arr.append(int(tmp.loc[tmp['related to'] == eq, ['classe']].values[0]))
-
-	# dfr['classes'] = pd.Series(classes_arr, index=dfr.index, dtype=np.int64)
-
-	# # eliminate non-classes examples
-	# dfr['classes'].replace(-1, np.nan, inplace=True)
 
 
 	# train
 	word_to_frecuency = get_word_to_frecuency(dftr['content'])
 
 	# dfr = eliminate_less_frequent_words(dfr, 5, word_to_frecuency)
-	dftr = eliminate_less_frequent_words(dftr, 5*6, word_to_frecuency)
+	dftr = eliminate_less_frequent_words(dftr, 5*n_perms, word_to_frecuency)
 
 	# eliminate empty strings from dataframe
 	dftr['content'].replace('', np.nan, inplace=True)
@@ -430,8 +364,7 @@ def main():
 	# test
 	word_to_frecuency = get_word_to_frecuency(dfte['content'])
 
-	# dfr = eliminate_less_frequent_words(dfr, 5, word_to_frecuency)
-	dfte = eliminate_less_frequent_words(dfte, 5*6, word_to_frecuency)
+	dfte = eliminate_less_frequent_words(dfte, 5, word_to_frecuency)
 
 	# eliminate empty strings from dataframe
 	dfte['content'].replace('', np.nan, inplace=True)
@@ -443,13 +376,13 @@ def main():
 	dfte['classes'].replace(0, 1, inplace=True)
 	dfte['classes'].replace(-1, 0, inplace=True)
 
-	# dfr.to_csv('data14Deps.csv')
 	dfte.to_csv('data14Glove_test.csv') ########### change for different embedding
 
 	vals = dftr.classes.value_counts()
 	sns.barplot(x=[0, 1, 2],y=[vals[0], vals[1], vals[2]])
 	plt.show()
 
+	# # buscar caracteres extraños	
 	# d = ['.', ';', ',', '’', ':', ' ', '/', '&', '”', '“', '"', "(", ")", "%", "@", "–", "-"]
 	# for e in dfr['content']:
 	# 	for c in e:

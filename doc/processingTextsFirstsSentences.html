@@ -38,10 +38,10 @@ Parámetros:<br>
 Retorna:<br>
 -&nbsp;[valor]&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;sin&nbsp;las&nbsp;palabras&nbsp;de&nbsp;parada</tt></dd></dl>
  <dl><dt><a name="-delete_weard_values"><strong>delete_weard_values</strong></a>(data)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;los&nbsp;valores&nbsp;atipicos&nbsp;de&nbsp;un&nbsp;conjunto&nbsp;de&nbsp;datos,&nbsp;lo&nbsp;hace&nbsp;mediante&nbsp;el&nbsp;rango&nbsp;intercuartilico<br>
-Todo&nbsp;dato&nbsp;que&nbsp;este&nbsp;1.5&nbsp;rangos&nbsp;intercuartilicos&nbsp;por&nbsp;debajo&nbsp;del&nbsp;cuartil&nbsp;1&nbsp;o&nbsp;por&nbsp;encima&nbsp;del&nbsp;cuartil&nbsp;3&nbsp;es&nbsp;un&nbsp;valor&nbsp;atipico&nbsp;y&nbsp;por&nbsp;l&nbsp;otanto&nbsp;se&nbsp;elimina<br>
+Todo&nbsp;dato&nbsp;que&nbsp;este&nbsp;1.5&nbsp;rangos&nbsp;intercuartilicos&nbsp;por&nbsp;debajo&nbsp;del&nbsp;cuartil&nbsp;1&nbsp;o&nbsp;por&nbsp;encima&nbsp;del&nbsp;cuartil&nbsp;3&nbsp;es&nbsp;un&nbsp;valor&nbsp;atipico&nbsp;y&nbsp;por&nbsp;lo&nbsp;tanto&nbsp;se&nbsp;elimina<br>
 &nbsp;<br>
 Parámetros:<br>
--&nbsp;data&nbsp;--&nbsp;Arrego&nbsp;de&nbsp;numpy&nbsp;|&nbsp;lista,&nbsp;conjunto&nbsp;de&nbsp;datos&nbsp;a&nbsp;los&nbsp;cauels&nbsp;se&nbsp;les&nbsp;va&nbsp;a&nbsp;eliminar&nbsp;los&nbsp;datos&nbsp;atipicos<br>
+-&nbsp;data&nbsp;--&nbsp;Arrego&nbsp;de&nbsp;numpy&nbsp;|&nbsp;lista,&nbsp;conjunto&nbsp;de&nbsp;datos&nbsp;a&nbsp;los&nbsp;cuales&nbsp;se&nbsp;les&nbsp;va&nbsp;a&nbsp;eliminar&nbsp;los&nbsp;datos&nbsp;atipicos<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;data&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;conjunto&nbsp;de&nbsp;datos&nbsp;sin&nbsp;valores&nbsp;atipicos</tt></dd></dl>
@@ -55,7 +55,7 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;el&nbsp;mismo&nbsp;dataframe&nbsp;de&nbsp;entrada&nbsp;pero&nbsp;sin&nbsp;las&nbsp;palabras&nbsp;menos&nbsp;repetidas&nbsp;y&nbsp;en&nbsp;el&nbsp;caso&nbsp;de&nbsp;que&nbsp;la&nbsp;noticia&nbsp;sea&nbsp;muy&nbsp;corta&nbsp;la&nbsp;elimina</tt></dd></dl>
- <dl><dt><a name="-get_raw_data"><strong>get_raw_data</strong></a>(title, content)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;el&nbsp;titulo&nbsp;y&nbsp;las&nbsp;tres&nbsp;primeras&nbsp;oraciones&nbsp;de&nbsp;una&nbsp;noticia,&nbsp;hace&nbsp;la&nbsp;eparación&nbsp;en&nbsp;oraciones&nbsp;mediante&nbsp;un&nbsp;tokenizer&nbsp;de&nbsp;la&nbsp;ibreria&nbsp;nltk<br>
+ <dl><dt><a name="-get_raw_data"><strong>get_raw_data</strong></a>(title, content)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;el&nbsp;título&nbsp;y&nbsp;las&nbsp;tres&nbsp;primeras&nbsp;oraciones&nbsp;de&nbsp;una&nbsp;noticia,&nbsp;hace&nbsp;la&nbsp;separación&nbsp;en&nbsp;oraciones&nbsp;mediante&nbsp;un&nbsp;tokenizer&nbsp;de&nbsp;la&nbsp;libreria&nbsp;nltk<br>
 &nbsp;<br>
 Parámetros:<br>
 -&nbsp;title&nbsp;--&nbsp;String,&nbsp;título&nbsp;de&nbsp;la&nbsp;noticia<br>
@@ -77,11 +77,11 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;[valor]&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;con&nbsp;sus&nbsp;palabras&nbsp;"lematizadas"</tt></dd></dl>
- <dl><dt><a name="-main"><strong>main</strong></a>()</dt><dd><tt>Main&nbsp;del&nbsp;archivo,&nbsp;este&nbsp;archivo&nbsp;se&nbsp;encarga&nbsp;de&nbsp;preprocesar&nbsp;las&nbsp;noticias,&nbsp;"limpiar&nbsp;la&nbsp;data"&nbsp;en&nbsp;terminos&nbsp;geenrales.&nbsp;Hace&nbsp;las&nbsp;operaciones&nbsp;que&nbsp;estén&nbsp;definidas&nbsp;en&nbsp;el&nbsp;metodo<br>
+ <dl><dt><a name="-main"><strong>main</strong></a>()</dt><dd><tt>Main&nbsp;del&nbsp;archivo,&nbsp;este&nbsp;archivo&nbsp;se&nbsp;encarga&nbsp;de&nbsp;preprocesar&nbsp;las&nbsp;noticias,&nbsp;"limpiar&nbsp;la&nbsp;data"&nbsp;en&nbsp;terminos&nbsp;generales.&nbsp;Hace&nbsp;las&nbsp;operaciones&nbsp;que&nbsp;estén&nbsp;definidas&nbsp;en&nbsp;el&nbsp;método<br>
 transform_tring.<br>
 &nbsp;<br>
-Primero&nbsp;ejecuta&nbsp;al&nbsp;funcion&nbsp;transform&nbsp;string,&nbsp;luego&nbsp;calcula&nbsp;las&nbsp;salidas&nbsp;de&nbsp;los&nbsp;ejemplos,&nbsp;luego&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;menos&nbsp;frecuentes&nbsp;y&nbsp;por&nbsp;ultimo&nbsp;guarda&nbsp;estos&nbsp;ultimos&nbsp;datos.</tt></dd></dl>
- <dl><dt><a name="-only_glove_words"><strong>only_glove_words</strong></a>(str, words_in_glove)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;que&nbsp;no&nbsp;estén&nbsp;en&nbsp;el&nbsp;dataset&nbsp;de&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;glove<br>
+Primero&nbsp;ejecuta&nbsp;la&nbsp;funcion&nbsp;transform&nbsp;string,&nbsp;luego&nbsp;calcula&nbsp;las&nbsp;salidas&nbsp;de&nbsp;los&nbsp;ejemplos,&nbsp;luego&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;menos&nbsp;frecuentes&nbsp;y&nbsp;por&nbsp;último&nbsp;guarda&nbsp;estos&nbsp;últimos&nbsp;datos.</tt></dd></dl>
+ <dl><dt><a name="-only_glove_words"><strong>only_glove_words</strong></a>(str, words_in_glove, source)</dt><dd><tt>Función&nbsp;que&nbsp;elimina&nbsp;las&nbsp;palabras&nbsp;que&nbsp;no&nbsp;estén&nbsp;en&nbsp;el&nbsp;dataset&nbsp;de&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;glove<br>
 &nbsp;<br>
 Parámetros:<br>
 -&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia<br>
@@ -103,6 +103,15 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;sin&nbsp;los&nbsp;caracteres&nbsp;indeseados</tt></dd></dl>
+ <dl><dt><a name="-split_uniformly"><strong>split_uniformly</strong></a>(df, train_size, classes)</dt><dd><tt>Función&nbsp;que&nbsp;separa&nbsp;uniformemente&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrada&nbsp;en&nbsp;training&nbsp;y&nbsp;testing,&nbsp;es&nbsp;decir,&nbsp;el&nbsp;[train_size]%&nbsp;de&nbsp;cada&nbsp;clase&nbsp;irá&nbsp;al&nbsp;set&nbsp;de&nbsp;entrenamiento&nbsp;y&nbsp;el&nbsp;1-[train_size]%&nbsp;irá&nbsp;al&nbsp;set&nbsp;de&nbsp;testing<br>
+&nbsp;<br>
+Parámetros:<br>
+-&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;a&nbsp;procesar<br>
+-&nbsp;train_size&nbsp;--&nbsp;Flotante,&nbsp;tamaño&nbsp;del&nbsp;set&nbsp;de&nbsp;entrenamiento,&nbsp;flotante&nbsp;dentro&nbsp;del&nbsp;rango&nbsp;(0.0,&nbsp;1.0)&nbsp;excluyente<br>
+&nbsp;<br>
+Retorna:<br>
+-&nbsp;trdf&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrenamiento<br>
+-&nbsp;tedf&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;testing</tt></dd></dl>
  <dl><dt><a name="-stem_words"><strong>stem_words</strong></a>(str)</dt><dd><tt>Función&nbsp;que&nbsp;convierte&nbsp;las&nbsp;palabras&nbsp;en&nbsp;sus&nbsp;"stems"&nbsp;o&nbsp;raíces<br>
 &nbsp;<br>
 Parámetros:<br>
@@ -110,12 +119,12 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;[valor]&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;con&nbsp;sus&nbsp;palabras&nbsp;"stemizadas"</tt></dd></dl>
- <dl><dt><a name="-transform_string"><strong>transform_string</strong></a>(str, words_in_glove, lang)</dt><dd><tt>Función&nbsp;que&nbsp;preprocesa&nbsp;las&nbsp;noticias,&nbsp;recibe&nbsp;el&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;completa&nbsp;y&nbsp;retorna&nbsp;el&nbsp;string&nbsp;preprocesado<br>
+ <dl><dt><a name="-transform_string"><strong>transform_string</strong></a>(cad, words_in_glove, lang, source)</dt><dd><tt>Función&nbsp;que&nbsp;preprocesa&nbsp;las&nbsp;noticias,&nbsp;recibe&nbsp;el&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;completa&nbsp;y&nbsp;retorna&nbsp;el&nbsp;string&nbsp;preprocesado<br>
 &nbsp;<br>
 Parámetros:<br>
 -&nbsp;str&nbsp;--&nbsp;String,&nbsp;string&nbsp;de&nbsp;la&nbsp;noticia&nbsp;que&nbsp;se&nbsp;va&nbsp;a&nbsp;preprocesar<br>
 -&nbsp;words_in_glove&nbsp;--&nbsp;Lista,&nbsp;lista&nbsp;de&nbsp;palabras&nbsp;en&nbsp;el&nbsp;dataset&nbsp;de&nbsp;vectores&nbsp;de&nbsp;word&nbsp;embeddings&nbsp;de&nbsp;glove<br>
--&nbsp;lang&nbsp;--&nbsp;String,&nbsp;lenguaje&nbsp;en&nbsp;el&nbsp;que&nbsp;está&nbsp;la&nbsp;noticia<br>
+-&nbsp;lang&nbsp;--&nbsp;String,&nbsp;lenguaje&nbsp;en&nbsp;el&nbsp;que&nbsp;está&nbsp;escrita&nbsp;la&nbsp;noticia<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;str&nbsp;--&nbsp;String,&nbsp;strng&nbsp;de&nbsp;la&nbsp;noticia&nbsp;preprocesada</tt></dd></dl>

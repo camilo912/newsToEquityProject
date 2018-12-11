@@ -19,12 +19,6 @@ from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import KFold
 
-from hyperopt import fmin
-from hyperopt import tpe
-from hyperopt import Trials
-from hyperopt import hp
-from hyperopt import STATUS_OK
-
 from timeit import default_timer as timer
 
 import numba
@@ -86,16 +80,16 @@ class DataManager():
 
 	def get_data(self):
 		"""
-			Función que retorna datos utiles de la clase
+			Función que retorna datos útiles de la clase
 
 			Parámetros:
 			NADA
 
 			Retorna:
-			- df -- DataFrame de pandas, daaframe con los datos de entrada
+			- df -- DataFrame de pandas, dataframe con los datos de entrada
 			- words -- Lista, listado de las palabras en el corpus
 			- max_len -- Entero, indica el mayor número de palabras dentro de una noticia o ejemplo
-			- idx2word -- Diccionario, diccionario que tiene como claves indices y como vores las palabras del corpus, asocia cada palabra del corpus con un indice especifico
+			- idx2word -- Diccionario, diccionario que tiene como claves indices y como valores las palabras del corpus, asocia cada palabra del corpus con un indice especifico
 			- word2embedd -- Diccionaro, diccionario que tiene como claves las palabras de corpus y como valor los embddings de las palabras
 		"""
 
@@ -104,13 +98,13 @@ class DataManager():
 
 	def indexer(self, s):
 		"""
-			Función que retorna los indices de las palabrasde una noticia
+			Función que retorna los indices de las palabras de una noticia
 
 			Parámetros:
-			- s -- String, conteni de un ejemplo o noticia
+			- s -- String, contenido de un ejemplo o noticia
 
 			Retorna:
-			- [valor] -- Lista, lista de indices delas palabra ingresadas en orden
+			- [valor] -- Lista, lista de indices de las palabras ingresadas en orden
 		"""
 
 		return [self.word2idx[w.lower()] for w in s.split()]
@@ -199,8 +193,8 @@ def embedd(idxs, default, new2, embedd_dic):
 @numba.jit(nopython=True)
 def embedd_gpu(idxs, default, new2, embedd_dic):
 	"""
-		Función para obtener los vectores de embedding a partir de los indices de las palabras. Esta funcion es utilizada cuando ha una GPU disponible, por que supuestamente la GPU agiliza este proceso
-		por que la GPU es especializada para trabajar con matrices como en este caso, sin embargo eso depende de la GPU que se posea aunque en general si mejora la rapidez.
+		Función para obtener los vectores de embedding a partir de los indices de las palabras. Esta funcion es utilizada cuando ha una GPU disponible, ya que supuestamente la GPU agiliza este proceso
+		al ser especializada para trabajar con matrices como en este caso, sin embargo eso depende de la GPU que se posea aunque en general si mejora la rapidez.
 
 		El signature que tiene: @numba.jit(nopython=True) es la forma como indicamos que esta función va a ser procesada pr la libreria numba la cual se encarga de todo el procesamiento en GPU de nvidia
 
@@ -333,7 +327,7 @@ def sort_batch(X, y, lengths):
 
 def split_uniformly(df, train_size):
 	"""
-		Función que separa uniformemente los datos de entrada en training y testing, es decir, el [train_size]% de cada clase irá al set de ntrenamiento y el 1-[train_size]% irá al set de testing
+		Función que separa uniformemente los datos de entrada en training y testing, es decir, el [train_size]% de cada clase irá al set de entrenamiento y el 1-[train_size]% irá al set de testing
 
 		Parámetros:
 		- df -- DataFrame de pandas, dataframe con los datos a procesar
@@ -543,131 +537,13 @@ def fit(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, t
 
 	return modified_test_acc
 
-# def objective(params, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads):
-# 	"""
-# 		Función objetivo que sirve para la optimización bayesiana, sirve para ejecuar el modelo con los parámetros recibidos, calcular el error de esta ejecución y así decidir
-# 		cuales parámetros son mejores.
-
-# 		Parámetros:
-# 		- params -- Diccionario, contien los parametros para la ejecución, estos parámetros son dados por la libreria de optimización bayesiana (hyperopt) dentro de un espacio previamente definido
-# 		- df -- DataFrame de pandas, dataframe con los datos a procesar
-# 		- max_len -- Entero, máxima longitud de una entrada
-# 		- n_out -- Entero, número de clases para clasificar la entrada
-# 		- embedding_dim -- Entero, dimensión del word embedding
-# 		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
-# 		- id_model -- Entero, id del modelo que se va a entrenar
-# 		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
-# 		- verbose -- Entero, nivel de verbosidad de la ejecución
-# 		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
-		
-# 		Retorna:
-# 		- diccionario -- Diccionario, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el esatdo de la ejecución. Todo esto es necesario para la libreria
-
-# 	"""
-# 	# Keep track of evals
-# 	global ITERATION
-	
-# 	ITERATION += 1
-# 	if(verbose > 0): print(ITERATION, params)
-
-# 	# Make sure parameters that need to be integers are integers
-# 	for parameter_name in ['n_hidden', 'batch_size', 'n_epochs']:
-# 		params[parameter_name] = int(params[parameter_name])
-
-# 	# Make sure parameters that need to be float are float
-# 	for parameter_name in ['lr', 'drop_p']:
-# 		params[parameter_name] = float(params[parameter_name])
-	
-# 	out_file = 'gbm_trials.csv'
-
-# 	start = timer()
-
-# 	modelos=[models.Model0, models.Model1, models.Model2, models.Model3, models.Model4, models.Model5, models.Model6, models.Model7, models.Model8, models.Model9, models.Model10, models.Model11, models.Model12, models.Model13, models.Model14]
-# 	m = modelos[id_model](embedding_dim, params['n_hidden'], n_out, params['drop_p'])
-# 	opt = optim.Adam(m.parameters(), params['lr'])#, weight_decay=params['weight_decay'])
-# 	acc = fit(m, df, F.nll_loss, opt, params['n_epochs'], max_len, params['batch_size'], train_size, embedding_dim, embedd_dic, verbose, bads)
-
-# 	# calculate no-score
-# 	no_score = 1 - acc # change from acc to loss. If first raises, second downs.
-# 	run_time = timer() - start
-
-# 	# Write to the csv file ('a' means append)
-# 	of_connection = open(out_file, 'a')
-# 	writer = csv.writer(of_connection)
-# 	writer.writerow([no_score, params, ITERATION, run_time])
-# 	of_connection.close()
-
-# 	# Dictionary with information for evaluation
-# 	return {'loss': no_score, 'params': params, 'iteration': ITERATION,
-# 			'train_time': run_time, 'status': STATUS_OK}
-
-# def bayes_optimization(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size, id_model, embedd_dic, verbose ,bads):
-# 	"""
-# 		Función para encontrar los parámetros optimos para un modelo
-
-# 		Parámetros:
-# 		- MAX_EVALS -- Entero, número máximo  de iteraciones de la optimización bayesiana
-# 		- n_out -- Entero, número de clases para clasificar la entrada
-# 		- max_len -- Entero, máxima longitud de una entrada
-# 		- df -- DataFrame de pandas, dataframe con los datos a procesar
-# 		- embedding_dim -- Entero, dimensión del word embedding
-# 		- train_size -- Flotante, tamaño del set de entrenamiento, flotante dentro del rango (0.0, 1.0) excluyente
-# 		- id_model -- Entero, id del modelo que se va a entrenar
-# 		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
-# 		- verbose -- Entero, nivel de verbosidad de la ejecución
-# 		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
-
-# 		Retorna: 
-# 		- best -- Diccionario, diccionario con los mejores parámetros encontrados en la optimización bayesiana
-
-# 	"""
-# 	global ITERATION
-# 	ITERATION = 0
-
-# 	# space
-# 	# big
-# 	space = {'batch_size': hp.quniform('batch_size', 5, 120, 1),
-# 			'drop_p': hp.uniform('drop_p', 0.0, 1.0),
-# 			'lr': hp.uniform('lr', 0.00001, 0.8),
-# 			'n_epochs': hp.quniform('n_epochs', 5, 75, 1),
-# 			'n_hidden': hp.quniform('n_hidden', 5, 300, 1)}
-# 	# space = {'batch_size': hp.quniform('batch_size', 68, 100, 1),
-# 	# 		'drop_p': hp.uniform('drop_p', 0.01, 0.4),
-# 	# 		'lr': hp.uniform('lr', 0.001, 0.1),
-# 	# 		'n_epochs': hp.quniform('n_epochs', 95, 130, 1),
-# 	# 		'n_hidden': hp.quniform('n_hidden', 15, 70, 1)}
-
-# 	# Keep track of results
-# 	bayes_trials = Trials()
-
-# 	# File to save first results
-# 	out_file = 'gbm_trials.csv'
-# 	of_connection = open(out_file, 'w')
-# 	writer = csv.writer(of_connection)
-
-# 	# Write the headers to the file
-# 	writer.writerow(['no-score', 'params', 'iteration', 'train_time'])
-# 	of_connection.close()
-
-# 	# Run optimization
-# 	best = fmin(fn = lambda x: objective(x, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads), space = space, algo = tpe.suggest, max_evals = MAX_EVALS, trials = bayes_trials, rstate = np.random.RandomState(np.random.randint(100)))
-
-# 	# store best results
-# 	of_connection = open('bests.txt', 'a')
-# 	writer = csv.writer(of_connection)
-# 	bayes_trials_results = sorted(bayes_trials.results, key = lambda x: x['loss'])
-# 	writer.writerow([bayes_trials_results[0]['loss'], bayes_trials_results[0]['params']['n_hidden'], bayes_trials_results[0]['params']['batch_size'], bayes_trials_results[0]['params']['n_epochs'], bayes_trials_results[0]['params']['lr'], bayes_trials_results[0]['params']['drop_p'], MAX_EVALS])
-# 	of_connection.close()
-
-# 	return best
-
 def objective(params, df_train, df_test, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads):
 	"""
-		Función objetivo que sirve para la optimización bayesiana, sirve para ejecuar el modelo con los parámetros recibidos, calcular el error de esta ejecución y así decidir
+		Función objetivo que sirve para la optimización bayesiana, sirve para ejecutar el modelo con los parámetros recibidos, calcular el error de esta ejecución y así decidir
 		cuales parámetros son mejores.
 
 		Parámetros:
-		- params -- Diccionario, contien los parametros para la ejecución, estos parámetros son dados por la libreria de optimización bayesiana (hyperopt) dentro de un espacio previamente definido
+		- params -- Diccionario, contiene los parámetros para la ejecución, estos parámetros son dados por la libreria de optimización bayesiana (bayes_opt) dentro de un espacio previamente definido
 		- df_train -- DataFrame de pandas, dataframe con los datos de entrenamiento
 		- df_test -- DataFrame de pandas, dataframe con los datos de prueba
 		- max_len -- Entero, máxima longitud de una entrada
@@ -680,7 +556,7 @@ def objective(params, df_train, df_test, max_len, n_out, embedding_dim, train_si
 		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
 		
 		Retorna:
-		- diccionario -- Diccionario, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el esatdo de la ejecución. Todo esto es necesario para la libreria
+		- diccionario -- Diccionario, diccionario que contiene el rmse, los parámetros, la iteración, el tiempo de ejecución y el estado de la ejecución. Todo esto es necesario para la libreria
 
 	"""
 	global ITERATION
@@ -732,7 +608,7 @@ def bayes_optimization(MAX_EVALS, n_out, max_len, df_train, df_test, embedding_d
 		- id_model -- Entero, id del modelo que se va a entrenar
 		- embedd_dic -- Arreglo de numpy, arreglo con los vectores de embedding de las palabras
 		- verbose -- Entero, nivel de verbosidad de la ejecución
-		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones apra hacer un debug de que está haciendo mal
+		- bads -- Booleano, indica si se quiere guardar las malas clasificaciones para hacer un debug de que está haciendo mal
 
 		Retorna: 
 		- best -- Diccionario, diccionario con los mejores parámetros encontrados en la optimización bayesiana
@@ -760,11 +636,11 @@ def main():
 		Main del proyecto, con este se ejecuta el entrenamiento del modelo de NLP.
 		Para invocar este script se le debe pasar el número del modelo a utilizar con la opción -m. Ejemplo: $python trainFirstsSentences.py -m 13
 		Adicionalmente hay otros dos parámetros:
-			-p -> un número entero indicando que se queire hacer optimización de parámetros, el número de nota el número de iteraciones de optimización que se deseen hacer.
+			-p -> un número entero indicando que se quiere hacer optimización de parámetros, el número denota el número de iteraciones de optimización que se deseen hacer.
 			-v -> Parámetro que controla el nivel de verbosidad de la ejecución, por default es 1
 
-		Este main solo adquiere los parámetros apra la ejecución ya sean los por default o que se haga optimización para encontrar una buena combianción de ellos y luego de esto
-		crea un modelo del tipo especificado y lo entrena invocano al metodo fit.
+		Este main solo adquiere los parámetros para la ejecución ya sean los por default o que se haga optimización para encontrar una buena combianción de ellos y luego de esto
+		crea un modelo del tipo especificado y lo entrena invocando al metodo fit.
 
 	"""
 

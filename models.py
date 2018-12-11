@@ -7,12 +7,13 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from torch.autograd import Variable
 
 """
-	Clase que contiene todos los mmodelos qu se puden utilizar par entrenar, se pueden agregar y quitar modelos, teniendo en cuenta qu se debe actualizar también la lista de modelos
+	archivo que contiene todos los mmodelos qu se puden utilizar par entrenar, se pueden agregar y quitar modelos, teniendo en cuenta que se debe actualizar también la lista de modelos
 	en el main que está en el archivo trainFirstsSentences.py
 
 	No se va a documentar cada modelo por que sería muy repetitivo y todos comparten estructuras en común además de que se pueden modificar mucho.
+	El desgloze de ada modelo está en el *signature* de la clase coo un comentario y en el archivo models.txt
 
-	Todos estos modelos heredan de la clase torch.nn.Module de pytorch 
+	Todos estos modelos heredan de la clase torch.nn.Module de pytorch
 """
 
 

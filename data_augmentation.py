@@ -19,6 +19,17 @@ def main():
 	df.to_csv('newsDatabaseComplete14_filtered_augmented.csv')
 
 def augment_data(df):
+	"""
+		Función para realizar daat augmentación de noticias, lo que hace es cambiar el orden de las oraciones
+
+		Parámetros:
+		- df -- DataFrame de pandas, dataframe que contiene las noticias
+
+		Retorna:
+		- df -- DataFrame de pandas, dataframe con las noticias originales y las "aumentadas"
+		- [valor] -- Entero, número de "aumentaciones" que se hicieron a cada noticia
+
+	"""
 	import nltk.data
 	import itertools
 	tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
@@ -30,7 +41,7 @@ def augment_data(df):
 		if(len(sentences) == 4):
 			for j in range(len(permutations)):
 				df = df.append(pd.DataFrame([[df.loc[i, 'classes'], ''.join(sentences[list(permutations[j])]), df.loc[i, 'date'], df.loc[i, 'related to'], df.loc[i, 'source'], df.loc[i, 'title']]], columns=df.columns), ignore_index=True)
-	return df
+	return df, len(permutations)
 
 
 if __name__ == '__main__':

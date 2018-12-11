@@ -20,16 +20,15 @@
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="torch.nn.functional.html">torch.nn.functional</a><br>
 <a href="argparse.html">argparse</a><br>
 <a href="csv.html">csv</a><br>
-<a href="hyperopt.hp.html">hyperopt.hp</a><br>
 </td><td width="25%" valign=top><a href="models.html">models</a><br>
 <a href="torch.nn.html">torch.nn</a><br>
 <a href="numpy.html">numpy</a><br>
-<a href="numba.html">numba</a><br>
-</td><td width="25%" valign=top><a href="torch.optim.html">torch.optim</a><br>
+</td><td width="25%" valign=top><a href="numba.html">numba</a><br>
+<a href="torch.optim.html">torch.optim</a><br>
 <a href="pandas.html">pandas</a><br>
+</td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
 <a href="time.html">time</a><br>
 <a href="torch.html">torch</a><br>
-</td><td width="25%" valign=top><a href="hyperopt.tpe.html">hyperopt.tpe</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
@@ -64,25 +63,25 @@
 <dl><dt><a name="DataManager-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Constructor&nbsp;de&nbsp;la&nbsp;clase&nbsp;aqui&nbsp;&nbsp;se&nbsp;lee&nbsp;la&nbsp;data&nbsp;de&nbsp;entrada,&nbsp;se&nbsp;hace&nbsp;un&nbsp;"shuffle"&nbsp;osea&nbsp;se&nbsp;desorganiza,&nbsp;se&nbsp;sacan&nbsp;igual&nbsp;número&nbsp;de&nbsp;ejemplos&nbsp;para&nbsp;cada&nbsp;clase,&nbsp;para&nbsp;tener&nbsp;uniformidad&nbsp;de&nbsp;los&nbsp;datos<br>
 lee&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;las&nbsp;palabras,&nbsp;le&nbsp;asigna&nbsp;un&nbsp;indice&nbsp;a&nbsp;cada&nbsp;palabra&nbsp;y&nbsp;&nbsp;asocia&nbsp;cada&nbsp;indice&nbsp;con&nbsp;un&nbsp;vector&nbsp;de&nbsp;embedding</tt></dd></dl>
 
-<dl><dt><a name="DataManager-get_data"><strong>get_data</strong></a>(self)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;datos&nbsp;utiles&nbsp;de&nbsp;la&nbsp;clase<br>
+<dl><dt><a name="DataManager-get_data"><strong>get_data</strong></a>(self)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;datos&nbsp;útiles&nbsp;de&nbsp;la&nbsp;clase<br>
 &nbsp;<br>
 Parámetros:<br>
 NADA<br>
 &nbsp;<br>
 Retorna:<br>
--&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;daaframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrada<br>
+-&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrada<br>
 -&nbsp;words&nbsp;--&nbsp;Lista,&nbsp;listado&nbsp;de&nbsp;las&nbsp;palabras&nbsp;en&nbsp;el&nbsp;corpus<br>
 -&nbsp;max_len&nbsp;--&nbsp;Entero,&nbsp;indica&nbsp;el&nbsp;mayor&nbsp;número&nbsp;de&nbsp;palabras&nbsp;dentro&nbsp;de&nbsp;una&nbsp;noticia&nbsp;o&nbsp;ejemplo<br>
--&nbsp;idx2word&nbsp;--&nbsp;Diccionario,&nbsp;diccionario&nbsp;que&nbsp;tiene&nbsp;como&nbsp;claves&nbsp;indices&nbsp;y&nbsp;como&nbsp;vores&nbsp;las&nbsp;palabras&nbsp;del&nbsp;corpus,&nbsp;asocia&nbsp;cada&nbsp;palabra&nbsp;del&nbsp;corpus&nbsp;con&nbsp;un&nbsp;indice&nbsp;especifico<br>
--&nbsp;word2embedd&nbsp;--&nbsp;Diccionaro,&nbsp;diccionario&nbsp;que&nbsp;tiene&nbsp;como&nbsp;claves&nbsp;las&nbsp;palabras&nbsp;de&nbsp;corpus&nbsp;y&nbsp;como&nbsp;vaor&nbsp;los&nbsp;embddings&nbsp;de&nbsp;las&nbsp;palabras</tt></dd></dl>
+-&nbsp;idx2word&nbsp;--&nbsp;Diccionario,&nbsp;diccionario&nbsp;que&nbsp;tiene&nbsp;como&nbsp;claves&nbsp;indices&nbsp;y&nbsp;como&nbsp;valores&nbsp;las&nbsp;palabras&nbsp;del&nbsp;corpus,&nbsp;asocia&nbsp;cada&nbsp;palabra&nbsp;del&nbsp;corpus&nbsp;con&nbsp;un&nbsp;indice&nbsp;especifico<br>
+-&nbsp;word2embedd&nbsp;--&nbsp;Diccionaro,&nbsp;diccionario&nbsp;que&nbsp;tiene&nbsp;como&nbsp;claves&nbsp;las&nbsp;palabras&nbsp;de&nbsp;corpus&nbsp;y&nbsp;como&nbsp;valor&nbsp;los&nbsp;embddings&nbsp;de&nbsp;las&nbsp;palabras</tt></dd></dl>
 
-<dl><dt><a name="DataManager-indexer"><strong>indexer</strong></a>(self, s)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;los&nbsp;indices&nbsp;de&nbsp;las&nbsp;palabrasde&nbsp;una&nbsp;noticia<br>
+<dl><dt><a name="DataManager-indexer"><strong>indexer</strong></a>(self, s)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;los&nbsp;indices&nbsp;de&nbsp;las&nbsp;palabras&nbsp;de&nbsp;una&nbsp;noticia<br>
 &nbsp;<br>
 Parámetros:<br>
--&nbsp;s&nbsp;--&nbsp;String,&nbsp;conteni&nbsp;de&nbsp;un&nbsp;ejemplo&nbsp;o&nbsp;noticia<br>
+-&nbsp;s&nbsp;--&nbsp;String,&nbsp;contenido&nbsp;de&nbsp;un&nbsp;ejemplo&nbsp;o&nbsp;noticia<br>
 &nbsp;<br>
 Retorna:<br>
--&nbsp;[valor]&nbsp;--&nbsp;Lista,&nbsp;lista&nbsp;de&nbsp;indices&nbsp;delas&nbsp;palabra&nbsp;ingresadas&nbsp;en&nbsp;orden</tt></dd></dl>
+-&nbsp;[valor]&nbsp;--&nbsp;Lista,&nbsp;lista&nbsp;de&nbsp;indices&nbsp;de&nbsp;las&nbsp;palabras&nbsp;ingresadas&nbsp;en&nbsp;orden</tt></dd></dl>
 
 <dl><dt><a name="DataManager-read_embedd_vectors"><strong>read_embedd_vectors</strong></a>(self, embedd)</dt><dd><tt>Función&nbsp;que&nbsp;retorna&nbsp;el&nbsp;diccionario&nbsp;que&nbsp;mapea&nbsp;de&nbsp;palabras&nbsp;a&nbsp;vector&nbsp;de&nbsp;embedding<br>
 &nbsp;<br>
@@ -173,19 +172,20 @@ Data descriptors inherited from <a href="torch.utils.data.dataset.html#Dataset">
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-bayes_optimization"><strong>bayes_optimization</strong></a>(MAX_EVALS, n_out, max_len, df, embedding_dim, train_size, id_model, embedd_dic, verbose, bads)</dt><dd><tt>Función&nbsp;para&nbsp;encontrar&nbsp;los&nbsp;parámetros&nbsp;optimos&nbsp;para&nbsp;un&nbsp;modelo<br>
+<td width="100%"><dl><dt><a name="-bayes_optimization"><strong>bayes_optimization</strong></a>(MAX_EVALS, n_out, max_len, df_train, df_test, embedding_dim, train_size, id_model, embedd_dic, verbose, bads)</dt><dd><tt>Función&nbsp;para&nbsp;encontrar&nbsp;los&nbsp;parámetros&nbsp;optimos&nbsp;para&nbsp;un&nbsp;modelo<br>
 &nbsp;<br>
 Parámetros:<br>
 -&nbsp;MAX_EVALS&nbsp;--&nbsp;Entero,&nbsp;número&nbsp;máximo&nbsp;&nbsp;de&nbsp;iteraciones&nbsp;de&nbsp;la&nbsp;optimización&nbsp;bayesiana<br>
 -&nbsp;n_out&nbsp;--&nbsp;Entero,&nbsp;número&nbsp;de&nbsp;clases&nbsp;para&nbsp;clasificar&nbsp;la&nbsp;entrada<br>
 -&nbsp;max_len&nbsp;--&nbsp;Entero,&nbsp;máxima&nbsp;longitud&nbsp;de&nbsp;una&nbsp;entrada<br>
--&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;a&nbsp;procesar<br>
+-&nbsp;df_train&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrenamiento<br>
+-&nbsp;df_test&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;prueba<br>
 -&nbsp;embedding_dim&nbsp;--&nbsp;Entero,&nbsp;dimensión&nbsp;del&nbsp;word&nbsp;embedding<br>
 -&nbsp;train_size&nbsp;--&nbsp;Flotante,&nbsp;tamaño&nbsp;del&nbsp;set&nbsp;de&nbsp;entrenamiento,&nbsp;flotante&nbsp;dentro&nbsp;del&nbsp;rango&nbsp;(0.0,&nbsp;1.0)&nbsp;excluyente<br>
 -&nbsp;id_model&nbsp;--&nbsp;Entero,&nbsp;id&nbsp;del&nbsp;modelo&nbsp;que&nbsp;se&nbsp;va&nbsp;a&nbsp;entrenar<br>
 -&nbsp;embedd_dic&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;arreglo&nbsp;con&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;las&nbsp;palabras<br>
 -&nbsp;verbose&nbsp;--&nbsp;Entero,&nbsp;nivel&nbsp;de&nbsp;verbosidad&nbsp;de&nbsp;la&nbsp;ejecución<br>
--&nbsp;bads&nbsp;--&nbsp;Booleano,&nbsp;indica&nbsp;si&nbsp;se&nbsp;quiere&nbsp;guardar&nbsp;las&nbsp;malas&nbsp;clasificaciones&nbsp;apra&nbsp;hacer&nbsp;un&nbsp;debug&nbsp;de&nbsp;que&nbsp;está&nbsp;haciendo&nbsp;mal<br>
+-&nbsp;bads&nbsp;--&nbsp;Booleano,&nbsp;indica&nbsp;si&nbsp;se&nbsp;quiere&nbsp;guardar&nbsp;las&nbsp;malas&nbsp;clasificaciones&nbsp;para&nbsp;hacer&nbsp;un&nbsp;debug&nbsp;de&nbsp;que&nbsp;está&nbsp;haciendo&nbsp;mal<br>
 &nbsp;<br>
 Retorna:&nbsp;<br>
 -&nbsp;best&nbsp;--&nbsp;Diccionario,&nbsp;diccionario&nbsp;con&nbsp;los&nbsp;mejores&nbsp;parámetros&nbsp;encontrados&nbsp;en&nbsp;la&nbsp;optimización&nbsp;bayesiana</tt></dd></dl>
@@ -197,8 +197,8 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;new&nbsp;--&nbsp;arreglo&nbsp;de&nbsp;numpy&nbsp;con&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;las&nbsp;palabras&nbsp;del&nbsp;ejemplo</tt></dd></dl>
- <dl><dt><a name="-embedd_gpu"><strong>embedd_gpu</strong></a>(idxs, default, new2, embedd_dic)</dt><dd><tt>Función&nbsp;para&nbsp;obtener&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;a&nbsp;partir&nbsp;de&nbsp;los&nbsp;indices&nbsp;de&nbsp;las&nbsp;palabras.&nbsp;Esta&nbsp;funcion&nbsp;es&nbsp;utilizada&nbsp;cuando&nbsp;ha&nbsp;una&nbsp;GPU&nbsp;disponible,&nbsp;por&nbsp;que&nbsp;supuestamente&nbsp;la&nbsp;GPU&nbsp;agiliza&nbsp;este&nbsp;proceso<br>
-por&nbsp;que&nbsp;la&nbsp;GPU&nbsp;es&nbsp;especializada&nbsp;para&nbsp;trabajar&nbsp;con&nbsp;matrices&nbsp;como&nbsp;en&nbsp;este&nbsp;caso,&nbsp;sin&nbsp;embargo&nbsp;eso&nbsp;depende&nbsp;de&nbsp;la&nbsp;GPU&nbsp;que&nbsp;se&nbsp;posea&nbsp;aunque&nbsp;en&nbsp;general&nbsp;si&nbsp;mejora&nbsp;la&nbsp;rapidez.<br>
+ <dl><dt><a name="-embedd_gpu"><strong>embedd_gpu</strong></a>(idxs, default, new2, embedd_dic)</dt><dd><tt>Función&nbsp;para&nbsp;obtener&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;a&nbsp;partir&nbsp;de&nbsp;los&nbsp;indices&nbsp;de&nbsp;las&nbsp;palabras.&nbsp;Esta&nbsp;funcion&nbsp;es&nbsp;utilizada&nbsp;cuando&nbsp;ha&nbsp;una&nbsp;GPU&nbsp;disponible,&nbsp;ya&nbsp;que&nbsp;supuestamente&nbsp;la&nbsp;GPU&nbsp;agiliza&nbsp;este&nbsp;proceso<br>
+al&nbsp;ser&nbsp;especializada&nbsp;para&nbsp;trabajar&nbsp;con&nbsp;matrices&nbsp;como&nbsp;en&nbsp;este&nbsp;caso,&nbsp;sin&nbsp;embargo&nbsp;eso&nbsp;depende&nbsp;de&nbsp;la&nbsp;GPU&nbsp;que&nbsp;se&nbsp;posea&nbsp;aunque&nbsp;en&nbsp;general&nbsp;si&nbsp;mejora&nbsp;la&nbsp;rapidez.<br>
 &nbsp;<br>
 El&nbsp;signature&nbsp;que&nbsp;tiene:&nbsp;@numba.jit(nopython=True)&nbsp;es&nbsp;la&nbsp;forma&nbsp;como&nbsp;indicamos&nbsp;que&nbsp;esta&nbsp;función&nbsp;va&nbsp;a&nbsp;ser&nbsp;procesada&nbsp;pr&nbsp;la&nbsp;libreria&nbsp;numba&nbsp;la&nbsp;cual&nbsp;se&nbsp;encarga&nbsp;de&nbsp;todo&nbsp;el&nbsp;procesamiento&nbsp;en&nbsp;GPU&nbsp;de&nbsp;nvidia<br>
 &nbsp;<br>
@@ -208,11 +208,12 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;new&nbsp;--&nbsp;arreglo&nbsp;de&nbsp;numpy&nbsp;con&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;las&nbsp;palabras&nbsp;del&nbsp;ejemplo</tt></dd></dl>
- <dl><dt><a name="-fit"><strong>fit</strong></a>(model, df, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads)</dt><dd><tt>Función&nbsp;para&nbsp;entrenar&nbsp;un&nbsp;modelo<br>
+ <dl><dt><a name="-fit"><strong>fit</strong></a>(model, df_train, df_test, loss_fn, opt, n_epochs, max_len, batch_size, train_size, embedding_dim, embedd_dic, verbose, bads)</dt><dd><tt>Función&nbsp;para&nbsp;entrenar&nbsp;un&nbsp;modelo<br>
 &nbsp;<br>
 Parámetros:<br>
 -&nbsp;model&nbsp;--&nbsp;Classe,&nbsp;modelo&nbsp;que&nbsp;se&nbsp;va&nbsp;a&nbsp;entrenar,&nbsp;la&nbsp;case&nbsp;debe&nbsp;venir&nbsp;del&nbsp;archivo&nbsp;models.py<br>
--&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;a&nbsp;procesar<br>
+-&nbsp;df_train&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrenamiento<br>
+-&nbsp;df_test&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;prueba<br>
 -&nbsp;loss_fn&nbsp;--&nbsp;Function,&nbsp;función&nbsp;de&nbsp;perdida&nbsp;apra&nbsp;el&nbsp;modelo,&nbsp;por&nbsp;default&nbsp;es&nbsp;NLL&nbsp;(neative&nbsp;log&nbsp;likelihood)<br>
 -&nbsp;opt&nbsp;--&nbsp;Optimizador,&nbsp;optimizador&nbsp;de&nbsp;pytorch&nbsp;que&nbsp;se&nbsp;encargara&nbsp;de&nbsp;actualizar&nbsp;los&nbsp;pesos&nbsp;del&nbsp;modelo,&nbsp;por&nbsp;default&nbsp;es&nbsp;Adam.<br>
 -&nbsp;n_epochs&nbsp;--&nbsp;Entero,&nbsp;número&nbsp;de&nbsp;epocas&nbsp;de&nbsp;entrenamiento<br>
@@ -235,15 +236,15 @@ Parámetros:<br>
 -&nbsp;word2embedd&nbsp;--&nbsp;Dicconaro,&nbsp;las&nbsp;claves&nbsp;son&nbsp;palabras&nbsp;en&nbsp;el&nbsp;corpus,&nbsp;están&nbsp;todas.&nbsp;Los&nbsp;valores&nbsp;son&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;cada&nbsp;palabra<br>
 &nbsp;<br>
 Retorna:<br>
--&nbsp;dic&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;arreglo&nbsp;con&nbsp;todos&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;delas&nbsp;paabras&nbsp;en&nbsp;el&nbsp;corpus,</tt></dd></dl>
+-&nbsp;arr&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;arreglo&nbsp;con&nbsp;todos&nbsp;los&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;delas&nbsp;paabras&nbsp;en&nbsp;el&nbsp;corpus,</tt></dd></dl>
  <dl><dt><a name="-main"><strong>main</strong></a>()</dt><dd><tt>Main&nbsp;del&nbsp;proyecto,&nbsp;con&nbsp;este&nbsp;se&nbsp;ejecuta&nbsp;el&nbsp;entrenamiento&nbsp;del&nbsp;modelo&nbsp;de&nbsp;NLP.<br>
 Para&nbsp;invocar&nbsp;este&nbsp;script&nbsp;se&nbsp;le&nbsp;debe&nbsp;pasar&nbsp;el&nbsp;número&nbsp;del&nbsp;modelo&nbsp;a&nbsp;utilizar&nbsp;con&nbsp;la&nbsp;opción&nbsp;-m.&nbsp;Ejemplo:&nbsp;$python&nbsp;trainFirstsSentences.py&nbsp;-m&nbsp;13<br>
 Adicionalmente&nbsp;hay&nbsp;otros&nbsp;dos&nbsp;parámetros:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-p&nbsp;-&gt;&nbsp;un&nbsp;número&nbsp;entero&nbsp;indicando&nbsp;que&nbsp;se&nbsp;queire&nbsp;hacer&nbsp;optimización&nbsp;de&nbsp;parámetros,&nbsp;el&nbsp;número&nbsp;de&nbsp;nota&nbsp;el&nbsp;número&nbsp;de&nbsp;iteraciones&nbsp;de&nbsp;optimización&nbsp;que&nbsp;se&nbsp;deseen&nbsp;hacer.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-p&nbsp;-&gt;&nbsp;un&nbsp;número&nbsp;entero&nbsp;indicando&nbsp;que&nbsp;se&nbsp;quiere&nbsp;hacer&nbsp;optimización&nbsp;de&nbsp;parámetros,&nbsp;el&nbsp;número&nbsp;denota&nbsp;el&nbsp;número&nbsp;de&nbsp;iteraciones&nbsp;de&nbsp;optimización&nbsp;que&nbsp;se&nbsp;deseen&nbsp;hacer.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-v&nbsp;-&gt;&nbsp;Parámetro&nbsp;que&nbsp;controla&nbsp;el&nbsp;nivel&nbsp;de&nbsp;verbosidad&nbsp;de&nbsp;la&nbsp;ejecución,&nbsp;por&nbsp;default&nbsp;es&nbsp;1<br>
 &nbsp;<br>
-Este&nbsp;main&nbsp;solo&nbsp;adquiere&nbsp;los&nbsp;parámetros&nbsp;apra&nbsp;la&nbsp;ejecución&nbsp;ya&nbsp;sean&nbsp;los&nbsp;por&nbsp;default&nbsp;o&nbsp;que&nbsp;se&nbsp;haga&nbsp;optimización&nbsp;para&nbsp;encontrar&nbsp;una&nbsp;buena&nbsp;combianción&nbsp;de&nbsp;ellos&nbsp;y&nbsp;luego&nbsp;de&nbsp;esto<br>
-crea&nbsp;un&nbsp;modelo&nbsp;del&nbsp;tipo&nbsp;especificado&nbsp;y&nbsp;lo&nbsp;entrena&nbsp;invocano&nbsp;al&nbsp;metodo&nbsp;fit.</tt></dd></dl>
+Este&nbsp;main&nbsp;solo&nbsp;adquiere&nbsp;los&nbsp;parámetros&nbsp;para&nbsp;la&nbsp;ejecución&nbsp;ya&nbsp;sean&nbsp;los&nbsp;por&nbsp;default&nbsp;o&nbsp;que&nbsp;se&nbsp;haga&nbsp;optimización&nbsp;para&nbsp;encontrar&nbsp;una&nbsp;buena&nbsp;combianción&nbsp;de&nbsp;ellos&nbsp;y&nbsp;luego&nbsp;de&nbsp;esto<br>
+crea&nbsp;un&nbsp;modelo&nbsp;del&nbsp;tipo&nbsp;especificado&nbsp;y&nbsp;lo&nbsp;entrena&nbsp;invocando&nbsp;al&nbsp;metodo&nbsp;fit.</tt></dd></dl>
  <dl><dt><a name="-media_movil"><strong>media_movil</strong></a>(data, n)</dt><dd><tt>Función&nbsp;que&nbsp;calcula&nbsp;la&nbsp;media&nbsp;movil&nbsp;de&nbsp;un&nbsp;arreglo&nbsp;en&nbsp;los&nbsp;últimos&nbsp;n&nbsp;valores<br>
 &nbsp;<br>
 Parámetros:<br>
@@ -252,12 +253,13 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 -&nbsp;[valor]&nbsp;--&nbsp;Flotante,&nbsp;la&nbsp;media&nbsp;de&nbsp;los&nbsp;últimos&nbsp;n&nbsp;valores</tt></dd></dl>
- <dl><dt><a name="-objective"><strong>objective</strong></a>(params, df, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads)</dt><dd><tt>Función&nbsp;objetivo&nbsp;que&nbsp;sirve&nbsp;para&nbsp;la&nbsp;optimización&nbsp;bayesiana,&nbsp;sirve&nbsp;para&nbsp;ejecuar&nbsp;el&nbsp;modelo&nbsp;con&nbsp;los&nbsp;parámetros&nbsp;recibidos,&nbsp;calcular&nbsp;el&nbsp;error&nbsp;de&nbsp;esta&nbsp;ejecución&nbsp;y&nbsp;así&nbsp;decidir<br>
+ <dl><dt><a name="-objective"><strong>objective</strong></a>(params, df_train, df_test, max_len, n_out, embedding_dim, train_size, id_model, embedd_dic, verbose, bads)</dt><dd><tt>Función&nbsp;objetivo&nbsp;que&nbsp;sirve&nbsp;para&nbsp;la&nbsp;optimización&nbsp;bayesiana,&nbsp;sirve&nbsp;para&nbsp;ejecutar&nbsp;el&nbsp;modelo&nbsp;con&nbsp;los&nbsp;parámetros&nbsp;recibidos,&nbsp;calcular&nbsp;el&nbsp;error&nbsp;de&nbsp;esta&nbsp;ejecución&nbsp;y&nbsp;así&nbsp;decidir<br>
 cuales&nbsp;parámetros&nbsp;son&nbsp;mejores.<br>
 &nbsp;<br>
 Parámetros:<br>
--&nbsp;params&nbsp;--&nbsp;Diccionario,&nbsp;contien&nbsp;los&nbsp;parametros&nbsp;para&nbsp;la&nbsp;ejecución,&nbsp;estos&nbsp;parámetros&nbsp;son&nbsp;dados&nbsp;por&nbsp;la&nbsp;libreria&nbsp;de&nbsp;optimización&nbsp;bayesiana&nbsp;(hyperopt)&nbsp;dentro&nbsp;de&nbsp;un&nbsp;espacio&nbsp;previamente&nbsp;definido<br>
--&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;a&nbsp;procesar<br>
+-&nbsp;params&nbsp;--&nbsp;Diccionario,&nbsp;contiene&nbsp;los&nbsp;parámetros&nbsp;para&nbsp;la&nbsp;ejecución,&nbsp;estos&nbsp;parámetros&nbsp;son&nbsp;dados&nbsp;por&nbsp;la&nbsp;libreria&nbsp;de&nbsp;optimización&nbsp;bayesiana&nbsp;(bayes_opt)&nbsp;dentro&nbsp;de&nbsp;un&nbsp;espacio&nbsp;previamente&nbsp;definido<br>
+-&nbsp;df_train&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrenamiento<br>
+-&nbsp;df_test&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;de&nbsp;prueba<br>
 -&nbsp;max_len&nbsp;--&nbsp;Entero,&nbsp;máxima&nbsp;longitud&nbsp;de&nbsp;una&nbsp;entrada<br>
 -&nbsp;n_out&nbsp;--&nbsp;Entero,&nbsp;número&nbsp;de&nbsp;clases&nbsp;para&nbsp;clasificar&nbsp;la&nbsp;entrada<br>
 -&nbsp;embedding_dim&nbsp;--&nbsp;Entero,&nbsp;dimensión&nbsp;del&nbsp;word&nbsp;embedding<br>
@@ -268,14 +270,14 @@ Parámetros:<br>
 -&nbsp;bads&nbsp;--&nbsp;Booleano,&nbsp;indica&nbsp;si&nbsp;se&nbsp;quiere&nbsp;guardar&nbsp;las&nbsp;malas&nbsp;clasificaciones&nbsp;apra&nbsp;hacer&nbsp;un&nbsp;debug&nbsp;de&nbsp;que&nbsp;está&nbsp;haciendo&nbsp;mal<br>
 &nbsp;<br>
 Retorna:<br>
--&nbsp;diccionario&nbsp;--&nbsp;Diccioanrio,&nbsp;diccionario&nbsp;que&nbsp;contiene&nbsp;el&nbsp;rmse,&nbsp;los&nbsp;parámetros,&nbsp;la&nbsp;iteración,&nbsp;el&nbsp;tiempo&nbsp;de&nbsp;ejecución&nbsp;y&nbsp;el&nbsp;esatdo&nbsp;de&nbsp;la&nbsp;ejecución.&nbsp;Todo&nbsp;esto&nbsp;es&nbsp;necesario&nbsp;para&nbsp;la&nbsp;libreria</tt></dd></dl>
+-&nbsp;diccionario&nbsp;--&nbsp;Diccionario,&nbsp;diccionario&nbsp;que&nbsp;contiene&nbsp;el&nbsp;rmse,&nbsp;los&nbsp;parámetros,&nbsp;la&nbsp;iteración,&nbsp;el&nbsp;tiempo&nbsp;de&nbsp;ejecución&nbsp;y&nbsp;el&nbsp;estado&nbsp;de&nbsp;la&nbsp;ejecución.&nbsp;Todo&nbsp;esto&nbsp;es&nbsp;necesario&nbsp;para&nbsp;la&nbsp;libreria</tt></dd></dl>
  <dl><dt><a name="-sort_batch"><strong>sort_batch</strong></a>(X, y, lengths)</dt><dd><tt>Función&nbsp;que&nbsp;organiza&nbsp;un&nbsp;batch&nbsp;en&nbsp;orden&nbsp;descendente.<br>
 &nbsp;<br>
 Parámetros:<br>
 -&nbsp;X&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;vectores&nbsp;de&nbsp;embedding&nbsp;de&nbsp;las&nbsp;palabras,es&nbsp;decir,&nbsp;la&nbsp;entrada&nbsp;para&nbsp;los&nbsp;modelos<br>
 -&nbsp;y&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;Arreglo&nbsp;que&nbsp;contiene&nbsp;los&nbsp;enteros&nbsp;de&nbsp;la&nbsp;clase&nbsp;a&nbsp;la&nbsp;que&nbsp;pertenece&nbsp;cada&nbsp;noticia,&nbsp;es&nbsp;decir,&nbsp;la&nbsp;salida&nbsp;de&nbsp;los&nbsp;modelos<br>
 -&nbsp;lengths&nbsp;--&nbsp;Arreglo&nbsp;de&nbsp;numpy,&nbsp;Arreglo&nbsp;co&nbsp;la&nbsp;longitud&nbsp;en&nbsp;palabras&nbsp;de&nbsp;cada&nbsp;noticia,&nbsp;esto&nbsp;es&nbsp;necesario&nbsp;para&nbsp;manejar&nbsp;el&nbsp;tema&nbsp;de&nbsp;padding</tt></dd></dl>
- <dl><dt><a name="-split_uniformly"><strong>split_uniformly</strong></a>(df, train_size)</dt><dd><tt>Función&nbsp;que&nbsp;separa&nbsp;uniformemente&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrada&nbsp;en&nbsp;training&nbsp;y&nbsp;testing,&nbsp;es&nbsp;decir,&nbsp;el&nbsp;[train_size]%&nbsp;de&nbsp;cada&nbsp;clase&nbsp;irá&nbsp;al&nbsp;set&nbsp;de&nbsp;ntrenamiento&nbsp;y&nbsp;el&nbsp;1-[train_size]%&nbsp;irá&nbsp;al&nbsp;set&nbsp;de&nbsp;testing<br>
+ <dl><dt><a name="-split_uniformly"><strong>split_uniformly</strong></a>(df, train_size)</dt><dd><tt>Función&nbsp;que&nbsp;separa&nbsp;uniformemente&nbsp;los&nbsp;datos&nbsp;de&nbsp;entrada&nbsp;en&nbsp;training&nbsp;y&nbsp;testing,&nbsp;es&nbsp;decir,&nbsp;el&nbsp;[train_size]%&nbsp;de&nbsp;cada&nbsp;clase&nbsp;irá&nbsp;al&nbsp;set&nbsp;de&nbsp;entrenamiento&nbsp;y&nbsp;el&nbsp;1-[train_size]%&nbsp;irá&nbsp;al&nbsp;set&nbsp;de&nbsp;testing<br>
 &nbsp;<br>
 Parámetros:<br>
 -&nbsp;df&nbsp;--&nbsp;DataFrame&nbsp;de&nbsp;pandas,&nbsp;dataframe&nbsp;con&nbsp;los&nbsp;datos&nbsp;a&nbsp;procesar<br>
@@ -287,12 +289,5 @@ Retorna:<br>
  <dl><dt><a name="-timer"><strong>timer</strong></a> = perf_counter(...)</dt><dd><tt>perf_counter()&nbsp;-&gt;&nbsp;float<br>
 &nbsp;<br>
 Performance&nbsp;counter&nbsp;for&nbsp;benchmarking.</tt></dd></dl>
-</td></tr></table><p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#55aa55">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>STATUS_OK</strong> = 'ok'</td></tr></table>
+</td></tr></table>
 </body></html>
